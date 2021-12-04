@@ -1,3 +1,3 @@
 # N-Puzzel
-#Kamel cofirms that git is working just fine
-#Abdullah cofirms that git is working just fine
+#Kamel confirms that git is working just fine
+#Abdullah confirms that git is working just fine
