@@ -8,10 +8,8 @@ class Creator:
     def __init__(self,N):
         self.N = int(math.sqrt(N+1))
 
-
-
+    #Create random intial state for N-puzzle
     def initial_state(self):
-
         initState = np.zeros((self.N,self.N),dtype=int)
         a = []
 
@@ -27,9 +25,9 @@ class Creator:
             for j in range(0,self.N):
                 initState[i][j] = a[index]
                 index = index+1
-            
         return initState
 
+    #Create goal state for N-puzzle
     def goalState(self):
         goal = np.zeros((self.N,self.N),dtype=int)
         index = 1
