@@ -24,7 +24,7 @@ class Creator:
         for i in range(0,self.N):
             for j in range(0,self.N):
                 initState[i][j] = a[index]
-                index = index+1
+                index = index+1 
         return initState
 
     #Create goal state for N-puzzle
