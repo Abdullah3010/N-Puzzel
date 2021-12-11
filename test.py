@@ -1,5 +1,7 @@
-print("Best team forever")
-print("Best Project and the full mark ISA")
-print("za3bola el 2oolaaa")
-print("Abdullah testing")
-print("No Way home")
+from creator import Creator
+
+#Create 8 puzzle
+c = Creator(8)
+x = c.initial_state()
+print(x)
+
