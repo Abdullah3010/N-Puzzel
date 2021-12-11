@@ -29,3 +29,13 @@ class Creator:
                 index = index+1
             
         return initState
+
+    def goalState(self):
+        goal = np.zeros((self.N,self.N),dtype=int)
+        index = 1
+        for i in range(0,self.N):
+            for j in range(0,self.N):
+                goal[i][j] = index
+                index = index+1
+        goal[self.N-1][self.N-1] = 0
+        return goal
