@@ -12,7 +12,7 @@ class Actuators:
         return x,y
 
     
-    def move_up(self,board):
+    def move_down(self,board):
         emtpy_tile_index=self.get_zero_index(board)
         x=emtpy_tile_index[0]
         y=emtpy_tile_index[1]       
@@ -29,7 +29,7 @@ class Actuators:
 
     
     
-    def move_down(self,board):
+    def move_up(self,board):
         emtpy_tile_index=self.get_zero_index(board)
         x=emtpy_tile_index[0]
         y=emtpy_tile_index[1]    
@@ -47,7 +47,7 @@ class Actuators:
       
      
 
-    def move_right(self,board):
+    def move_left(self,board):
         emtpy_tile_index=self.get_zero_index(board)
         x=emtpy_tile_index[0]
         y=emtpy_tile_index[1]    
@@ -64,7 +64,7 @@ class Actuators:
 
 
 
-    def move_left(self,board):
+    def move_right(self,board):
         emtpy_tile_index=self.get_zero_index(board)
         x=emtpy_tile_index[0]
         y=emtpy_tile_index[1]    
