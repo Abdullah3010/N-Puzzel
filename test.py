@@ -8,12 +8,14 @@ from Actuators import Actuators
 # print(x)
 # print(g)
 
-arr=[1,2,3,4,0,5,6,7,8]
+board=[[1,2,3],
+       [4,0,5],
+       [6,7,8]]
 
 A=Actuators()
 
-res=A.move_up(arr)
-print(res)
+res=A.move_up(board)
+print(board)
 res2=A.move_up(res[1])
 print(res2)
 res3=A.move_down(res2[1])
