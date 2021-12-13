@@ -49,7 +49,7 @@ def getSize():
     return getBOARDERSIZE()
 
 def main():
-    global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, MovCounter, test
+    global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, H2_SURF, H2_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, MovCounter, test
 #  MovCounter Counter to count number of moves made to solve the the puzzle
 #  N number of sides of board
     test = True  # variable to check wither the puzzle size is chosen or not to disaple updating it while working
@@ -67,6 +67,11 @@ def main():
     S3_SURF, S3_RECT = makeText('8-Puzzle', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 700, WINDOWHEIGHT - 300)
     S4_SURF, S4_RECT = makeText('16-Puzzle', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 700, WINDOWHEIGHT - 260)
     S5_SURF, S5_RECT = makeText('24-Puzzle', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 700, WINDOWHEIGHT - 220)
+    H1_SURF, H1_RECT = makeText('Heurestic 1', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 430)
+    H2_SURF, H2_RECT = makeText('Heurestic 2', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 400)
+    H3_SURF, H3_RECT = makeText('Heurestic 3', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 370)
+    H4_SURF, H4_RECT = makeText('Heurestic 4', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 340)
+    H5_SURF, H5_RECT = makeText('Heurestic 5', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 310)
 
     mainBoard = BoardData.getBoard(getBOARDERSIZE())
     drawBoard(mainBoard, msg)  #Draw starting board as goal board
@@ -100,6 +105,17 @@ def main():
                         setBOARDERSIZE(5)
                         mainBoard = BoardData.getBoard(getBOARDERSIZE())
                         drawBoard(mainBoard, msg)
+                    #Choosing the heuristic \\Kamel
+                    elif H1_RECT.collidepoint(event.pos):
+                        return None
+                    elif H2_RECT.collidepoint(event.pos):
+                        return None
+                    elif H3_RECT.collidepoint(event.pos):
+                        return None
+                    elif H4_RECT.collidepoint(event.pos):
+                        return None
+                    elif H5_RECT.collidepoint(event.pos):
+                        return None
                     elif RESET_RECT.collidepoint(event.pos):
                         resetAnimation(mainBoard, allMoves) # clicked on Reset button
                         allMoves = []
@@ -264,6 +280,11 @@ def drawBoard(board, message):
     DISPLAYSURF.blit(S3_SURF, S3_RECT)
     DISPLAYSURF.blit(S4_SURF, S4_RECT)
     DISPLAYSURF.blit(S5_SURF, S5_RECT)
+    DISPLAYSURF.blit(H1_SURF, H1_RECT)
+    DISPLAYSURF.blit(H2_SURF, H2_RECT)
+    DISPLAYSURF.blit(H3_SURF, H3_RECT)
+    DISPLAYSURF.blit(H4_SURF, H4_RECT)
+    DISPLAYSURF.blit(H5_SURF, H5_RECT)
     counterTextSurf, counterTextRect = makeText("Number of Moves", MESSAGECOLOR, BGCOLOR, 5, 30)
     counterSurf, counterRect = makeText("0", MESSAGECOLOR, BGCOLOR, 190,30)  # Should Replace the text filed mith number of moves made to solve the puzzle \\Kamel
     DISPLAYSURF.blit(counterTextSurf, counterTextRect)
