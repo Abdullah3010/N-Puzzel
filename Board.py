@@ -1,26 +1,40 @@
 class Board:
     def __init__(self, N):
-        self.BoardSize = N
+        self.__BoardSize = N
+        self.__MovCounter = 0
 
     def setBOARDERSIZE(self, N):
-        self.BoardSize = N
+        self.__BoardSize = N
 
     def getBOARDERSIZE(self):
-        return self.BoardSize
+        return self.__BoardSize
 
-    def getBoard(self, BOARDSIZE):
+    def getTILESIZE(self):
+        return int(250/self.__BoardSize)
+
+    def getMovCounter(self):
+        return self.__MovCounter
+
+    def incMovCounter(self):
+        self.__MovCounter += 1
+
+    def resetMovCounter(self):
+        self.__MovCounter = 0
+
+    def getBoard(self):
         # Return a board data structure with tiles in the solved state.
         # For example, if BOARDWIDTH and BOARDHEIGHT are both 3, this function
         # returns [[1, 4, 7], [2, 5, 8], [3, 6, BLANK]]
+        self.__MovCounter = 0
         counter = 1
         board = []
-        for x in range(BOARDSIZE):
+        for x in range(self.__BoardSize):
             column = []
-            for y in range(BOARDSIZE):
+            for y in range(self.__BoardSize):
                 column.append(counter)
-                counter += BOARDSIZE
+                counter += self.__BoardSize
             board.append(column)
-            counter -= BOARDSIZE * (BOARDSIZE - 1) + BOARDSIZE - 1
+            counter -= self.__BoardSize * (self.__BoardSize - 1) + self.__BoardSize - 1
 
-        board[BOARDSIZE - 1][BOARDSIZE - 1] = None
+        board[self.__BoardSize - 1][self.__BoardSize - 1] = None
         return board

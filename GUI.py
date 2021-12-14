@@ -9,18 +9,13 @@ from pygame.locals import *
 # Create the constants (go ahead and experiment with different values)
 
 
-# BOARDERSIZE Defines size of board \\Kamel
+# BoardData is a class for datastructure of the board which all data is stored in it and retreved from it \\Kamel
 BoardData = Board.Board(5)
-# number of columns in the board
-def getBOARDERSIZE():
-    return BoardData.getBOARDERSIZE()
-def setBOARDERSIZE(size):
-    BoardData.setBOARDERSIZE(size)
-TILESIZE = int(250 / getBOARDERSIZE())
+
 WINDOWWIDTH = 740
 WINDOWHEIGHT = 480
-XMARGIN = int((WINDOWWIDTH - (TILESIZE * getBOARDERSIZE() + (getBOARDERSIZE() - 1))) / 2)
-YMARGIN = int((WINDOWHEIGHT - (TILESIZE * getBOARDERSIZE() + (getBOARDERSIZE() - 1))) / 2)
+XMARGIN = int((WINDOWWIDTH - (BoardData.getTILESIZE() * BoardData.getBOARDERSIZE() + (BoardData.getBOARDERSIZE() - 1))) / 2)
+YMARGIN = int((WINDOWHEIGHT - (BoardData.getTILESIZE() * BoardData.getBOARDERSIZE() + (BoardData.getBOARDERSIZE() - 1))) / 2)
 FPS = 30
 BLANK = None
 
@@ -45,13 +40,10 @@ UP = 'up'
 DOWN = 'down'
 LEFT = 'left'
 RIGHT = 'right'
-def getSize():
-    return getBOARDERSIZE()
 
 def main():
-    global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, H2_SURF, H2_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, MovCounter, test
-#  MovCounter Counter to count number of moves made to solve the the puzzle
-#  N number of sides of board
+    global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, H2_SURF, H2_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, counterTextSURF, counterTextRECT, counterSURF, counterRECT, test
+
     test = True  # variable to check wither the puzzle size is chosen or not to disaple updating it while working
     msg = 'Choose "Puzzle size" then choose "Heuristic" then press SOLVE'
     pygame.init()
@@ -72,11 +64,13 @@ def main():
     H3_SURF, H3_RECT = makeText('Heurestic 3', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 370)
     H4_SURF, H4_RECT = makeText('Heurestic 4', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 340)
     H5_SURF, H5_RECT = makeText('Heurestic 5', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 310)
+    counterTextSURF, counterTextRECT = makeText("Number of Moves", MESSAGECOLOR, BGCOLOR, 5, 30)
+    counterSURF, counterRECT = makeText(str(BoardData.getMovCounter()), MESSAGECOLOR, BGCOLOR, 190,30)
 
-    mainBoard = BoardData.getBoard(getBOARDERSIZE())
+    mainBoard = BoardData.getBoard()
     drawBoard(mainBoard, msg)  #Draw starting board as goal board
 
-    SOLVEDBOARD = BoardData.getBoard(getBOARDERSIZE()) # a solved board is the same as the board in a start state.
+    SOLVEDBOARD = BoardData.getBoard() # a solved board is the same as the board in a start state.
 
     allMoves = [] # list of moves made from the solved configuration
 
@@ -94,16 +88,19 @@ def main():
                     # check if the user clicked on an option button
                     #Determine which button was clicked \\Kamel
                     if S3_RECT.collidepoint(event.pos) and test:
-                        setBOARDERSIZE(3)
-                        mainBoard = BoardData.getBoard(getBOARDERSIZE())
+                        BoardData.setBOARDERSIZE(3)
+                        BoardData.resetMovCounter()
+                        mainBoard = BoardData.getBoard()
                         drawBoard(mainBoard, msg)
                     elif S4_RECT.collidepoint(event.pos) and test:
-                        setBOARDERSIZE(4)
-                        mainBoard = BoardData.getBoard(getBOARDERSIZE())
+                        BoardData.setBOARDERSIZE(4)
+                        BoardData.resetMovCounter()
+                        mainBoard = BoardData.getBoard()
                         drawBoard(mainBoard, msg)
                     elif S5_RECT.collidepoint(event.pos) and test:
-                        setBOARDERSIZE(5)
-                        mainBoard = BoardData.getBoard(getBOARDERSIZE())
+                        BoardData.setBOARDERSIZE(5)
+                        BoardData.resetMovCounter()
+                        mainBoard = BoardData.getBoard()
                         drawBoard(mainBoard, msg)
                     #Choosing the heuristic \\Kamel
                     elif H1_RECT.collidepoint(event.pos):
@@ -121,7 +118,7 @@ def main():
                         allMoves = []
                         test = True
                     elif NEW_RECT.collidepoint(event.pos):
-                        mainBoard = generateNewPuzzle(random.randint(10, 100), getBOARDERSIZE()) # clicked on New Game button
+                        mainBoard = generateNewPuzzle(random.randint(10, 100)) # clicked on New Game button
                         test = True
                     elif SOLVE_RECT.collidepoint(event.pos):
                         drawBoard(mainBoard, None)
@@ -186,14 +183,18 @@ def makeMove(board, move):
     # This function does not check if the move is valid.
     blankx, blanky = getBlankPosition(board)
 
-    if move == UP:
+    if move == UP and isValidMove(board, move):
         board[blankx][blanky], board[blankx][blanky + 1] = board[blankx][blanky + 1], board[blankx][blanky]
-    elif move == DOWN:
+        BoardData.incMovCounter()
+    elif move == DOWN and isValidMove(board, move):
         board[blankx][blanky], board[blankx][blanky - 1] = board[blankx][blanky - 1], board[blankx][blanky]
-    elif move == LEFT:
+        BoardData.incMovCounter()
+    elif move == LEFT and isValidMove(board, move):
         board[blankx][blanky], board[blankx + 1][blanky] = board[blankx + 1][blanky], board[blankx][blanky]
-    elif move == RIGHT:
+        BoardData.incMovCounter()
+    elif move == RIGHT and isValidMove(board, move):
         board[blankx][blanky], board[blankx - 1][blanky] = board[blankx - 1][blanky], board[blankx][blanky]
+        BoardData.incMovCounter()
 
 
 def isValidMove(board, move):
@@ -222,9 +223,9 @@ def getRandomMove(board, lastMove=None):
     return random.choice(validMoves)
 
 
-def getLeftTopOfTile(tileX, tileY, BOARDSIZE):
-    left = XMARGIN + (tileX * int(250/BOARDSIZE)) + (tileX - 1)
-    top = YMARGIN + (tileY * int(250/BOARDSIZE)) + (tileY - 1)
+def getLeftTopOfTile(tileX, tileY):
+    left = XMARGIN + (tileX * BoardData.getTILESIZE()) + (tileX - 1)
+    top = YMARGIN + (tileY * BoardData.getTILESIZE()) + (tileY - 1)
     return (left, top)
 
 
@@ -232,21 +233,21 @@ def getSpotClicked(board, x, y):
     # from the x & y pixel coordinates, get the x & y board coordinates
     for tileX in range(len(board)):
         for tileY in range(len(board[0])):
-            left, top = getLeftTopOfTile(tileX, tileY, len(board))
-            tileRect = pygame.Rect(left, top, TILESIZE, TILESIZE)
+            left, top = getLeftTopOfTile(tileX, tileY)
+            tileRect = pygame.Rect(left, top, BoardData.getTILESIZE(), BoardData.getTILESIZE())
             if tileRect.collidepoint(x, y):
                 return (tileX, tileY)
     return (None, None)
 
 
-def drawTile(tilex, tiley, number, BOARDSIZE, adjx=0, adjy=0):
+def drawTile(tilex, tiley, number, adjx=0, adjy=0):
     # draw a tile at board coordinates tilex and tiley, optionally a few
     # pixels over (determined by adjx and adjy)
-    left, top = getLeftTopOfTile(tilex, tiley, BOARDSIZE)
-    pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left + adjx, top + adjy, int(250/BOARDSIZE), int(250/BOARDSIZE)))
+    left, top = getLeftTopOfTile(tilex, tiley)
+    pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left + adjx, top + adjy, BoardData.getTILESIZE(), BoardData.getTILESIZE()))
     textSurf = BASICFONT.render(str(number), True, TEXTCOLOR)
     textRect = textSurf.get_rect()
-    textRect.center = left + int(int(250/BOARDSIZE) / 2) + adjx, top + int(int(250/BOARDSIZE) / 2) + adjy
+    textRect.center = left + int(BoardData.getTILESIZE() / 2) + adjx, top + int(BoardData.getTILESIZE() / 2) + adjy
     DISPLAYSURF.blit(textSurf, textRect)
 
 
@@ -267,11 +268,12 @@ def drawBoard(board, message):
     for tilex in range(len(board)):
         for tiley in range(len(board[0])):
             if board[tilex][tiley]:
-                drawTile(tilex, tiley, board[tilex][tiley], len(board))
+                drawTile(tilex, tiley, board[tilex][tiley])
 
-    left, top = getLeftTopOfTile(0, 0, len(board))
-    width = 5 * TILESIZE
-    height = 5 * TILESIZE
+#Draw the board border (Blue line around the tiles) \\Kamel
+    left, top = getLeftTopOfTile(0, 0)
+    width = 250
+    height = 250
     pygame.draw.rect(DISPLAYSURF, BORDERCOLOR, (left - 5, top - 5, width + 11, height + 11), 4)
 
     DISPLAYSURF.blit(RESET_SURF, RESET_RECT)
@@ -285,10 +287,9 @@ def drawBoard(board, message):
     DISPLAYSURF.blit(H3_SURF, H3_RECT)
     DISPLAYSURF.blit(H4_SURF, H4_RECT)
     DISPLAYSURF.blit(H5_SURF, H5_RECT)
-    counterTextSurf, counterTextRect = makeText("Number of Moves", MESSAGECOLOR, BGCOLOR, 5, 30)
-    counterSurf, counterRect = makeText("0", MESSAGECOLOR, BGCOLOR, 190,30)  # Should Replace the text filed mith number of moves made to solve the puzzle \\Kamel
-    DISPLAYSURF.blit(counterTextSurf, counterTextRect)
-    DISPLAYSURF.blit(counterSurf, counterRect)
+    DISPLAYSURF.blit(counterTextSURF, counterTextRECT)
+    counterSURF, counterRECT = makeText(str(BoardData.getMovCounter()), MESSAGECOLOR, BGCOLOR, 190,30)
+    DISPLAYSURF.blit(counterSURF, counterRECT)
 
 
 def slideAnimation(board, direction, message, animationSpeed):
@@ -312,38 +313,42 @@ def slideAnimation(board, direction, message, animationSpeed):
     drawBoard(board, message)
     baseSurf = DISPLAYSURF.copy()
     # draw a blank space over the moving tile on the baseSurf Surface.
-    moveLeft, moveTop = getLeftTopOfTile(movex, movey, len(board))
-    pygame.draw.rect(baseSurf, BGCOLOR, (moveLeft, moveTop, TILESIZE, TILESIZE))
+    moveLeft, moveTop = getLeftTopOfTile(movex, movey)
+    pygame.draw.rect(baseSurf, BGCOLOR, (moveLeft, moveTop, BoardData.getTILESIZE(), BoardData.getTILESIZE()))
 
-    for i in range(0, TILESIZE, animationSpeed):
+    for i in range(0, BoardData.getTILESIZE(), animationSpeed):
         # animate the tile sliding over
         checkForQuit()
         DISPLAYSURF.blit(baseSurf, (0, 0))
         if direction == UP:
-            drawTile(movex, movey, board[movex][movey], len(board), 0, -i)
+            drawTile(movex, movey, board[movex][movey], 0, -i)
         if direction == DOWN:
-            drawTile(movex, movey, board[movex][movey], len(board), 0, i)
+            drawTile(movex, movey, board[movex][movey], 0, i)
         if direction == LEFT:
-            drawTile(movex, movey, board[movex][movey], len(board), -i, 0)
+            drawTile(movex, movey, board[movex][movey], -i, 0)
         if direction == RIGHT:
-            drawTile(movex, movey, board[movex][movey], len(board), i, 0)
+            drawTile(movex, movey, board[movex][movey], i, 0)
 
         pygame.display.update()
+        DISPLAYSURF.blit(counterTextSURF, counterTextRECT)
+        counterSURF, counterRECT = makeText(str(BoardData.getMovCounter()), MESSAGECOLOR, BGCOLOR, 190,30)
+        DISPLAYSURF.blit(counterSURF, counterRECT)
         FPSCLOCK.tick(FPS)
 
 
-def generateNewPuzzle(numSlides, N):
+def generateNewPuzzle(numSlides):
     # From a starting configuration, make numSlides number of moves (and
     # animate these moves).
-    board = BoardData.getBoard(N)
+    board = BoardData.getBoard()
     drawBoard(board, '')
     pygame.display.update()
     pygame.time.wait(500) # pause 500 milliseconds for effect
     lastMove = None
     for i in range(numSlides):
         move = getRandomMove(board, lastMove)
-        slideAnimation(board, move, 'Generating new puzzle...', animationSpeed=int(TILESIZE / 3))
+        slideAnimation(board, move, 'Generating new puzzle...', animationSpeed=int(BoardData.getTILESIZE() / 3))
         makeMove(board, move)
+        BoardData.resetMovCounter()
         lastMove = move
     return board
 
@@ -362,7 +367,8 @@ def resetAnimation(board, allMoves):
             oppositeMove = LEFT
         elif move == LEFT:
             oppositeMove = RIGHT
-        slideAnimation(board, oppositeMove, '', animationSpeed=int(TILESIZE / 2))
+        slideAnimation(board, oppositeMove, '', animationSpeed=int(BoardData.getTILESIZE() / 2))
+        BoardData.resetMovCounter()
         makeMove(board, oppositeMove)
 
 
