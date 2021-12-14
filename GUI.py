@@ -104,15 +104,15 @@ def main():
                         drawBoard(mainBoard, msg)
                     #Choosing the heuristic \\Kamel
                     elif H1_RECT.collidepoint(event.pos):
-                        return None
+                        BoardData.Solve(BoardData.H1)
                     elif H2_RECT.collidepoint(event.pos):
-                        return None
+                        BoardData.Solve(BoardData.H2)
                     elif H3_RECT.collidepoint(event.pos):
-                        return None
+                        BoardData.Solve(BoardData.H3)
                     elif H4_RECT.collidepoint(event.pos):
-                        return None
+                        BoardData.Solve(BoardData.H4)
                     elif H5_RECT.collidepoint(event.pos):
-                        return None
+                        BoardData.Solve(BoardData.H5)
                     elif RESET_RECT.collidepoint(event.pos):
                         resetAnimation(mainBoard, allMoves) # clicked on Reset button
                         allMoves = []
@@ -121,6 +121,7 @@ def main():
                         mainBoard = generateNewPuzzle(random.randint(10, 100)) # clicked on New Game button
                         test = True
                     elif SOLVE_RECT.collidepoint(event.pos):
+                        resetAnimation(Board,BoardData.getSolution())
                         drawBoard(mainBoard, None)
                         test = False
 
@@ -150,7 +151,7 @@ def main():
                     slideTo = DOWN
 
         if slideTo:
-            slideAnimation(mainBoard, slideTo, 'Click tile or press arrow keys to slide.', 8) # show slide on screen
+            slideAnimation(mainBoard, slideTo, msg, 8) # show slide on screen
             makeMove(mainBoard, slideTo)
             allMoves.append(slideTo) # record the slide
         pygame.display.update()
@@ -180,7 +181,6 @@ def getBlankPosition(board):
 
 
 def makeMove(board, move):
-    # This function does not check if the move is valid.
     blankx, blanky = getBlankPosition(board)
 
     if move == UP and isValidMove(board, move):
@@ -287,6 +287,7 @@ def drawBoard(board, message):
     DISPLAYSURF.blit(H3_SURF, H3_RECT)
     DISPLAYSURF.blit(H4_SURF, H4_RECT)
     DISPLAYSURF.blit(H5_SURF, H5_RECT)
+
     DISPLAYSURF.blit(counterTextSURF, counterTextRECT)
     counterSURF, counterRECT = makeText(str(BoardData.getMovCounter()), MESSAGECOLOR, BGCOLOR, 190,30)
     DISPLAYSURF.blit(counterSURF, counterRECT)

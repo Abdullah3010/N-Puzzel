@@ -1,4 +1,12 @@
 class Board:
+    UP = 'up'
+    DOWN = 'down'
+    LEFT = 'left'
+    RIGHT = 'right'
+
+    __Solution = []
+    __Forantier = {}
+
     def __init__(self, N):
         self.__BoardSize = N
         self.__MovCounter = 0
@@ -28,6 +36,7 @@ class Board:
         self.__MovCounter = 0
         counter = 1
         board = []
+
         for x in range(self.__BoardSize):
             column = []
             for y in range(self.__BoardSize):
@@ -38,3 +47,26 @@ class Board:
 
         board[self.__BoardSize - 1][self.__BoardSize - 1] = None
         return board
+    def Solve(self, H):
+        self.__Forantier.append(H(self.getBoard()) ,self.getBoard())
+        self.__Forantier.sort()
+        self.__Forantier.pop()
+        self.__Solution
+
+    def getSolution(self):
+        return self.__Solution
+
+    def H1(self, board):
+        return None
+
+    def H2(self, board):
+        return None
+
+    def H3(self, board):
+        return None
+
+    def H4(self, board):
+        return None
+
+    def H5(self, board):
+        return None
