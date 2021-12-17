@@ -42,7 +42,7 @@ LEFT = 'left'
 RIGHT = 'right'
 
 def main():
-    global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, H2_SURF, H2_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, counterTextSURF, counterTextRECT, counterSURF, counterRECT, test
+    global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, Euclidean_SURF, Euclidean_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, counterTextSURF, counterTextRECT, counterSURF, counterRECT, test
 
     test = True  # variable to check wither the puzzle size is chosen or not to disaple updating it while working
     msg = 'Choose "Puzzle size" then choose "Heuristic" then press SOLVE'
@@ -60,7 +60,7 @@ def main():
     S4_SURF, S4_RECT = makeText('16-Puzzle', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 700, WINDOWHEIGHT - 260)
     S5_SURF, S5_RECT = makeText('24-Puzzle', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 700, WINDOWHEIGHT - 220)
     H1_SURF, H1_RECT = makeText('Heurestic 1', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 430)
-    H2_SURF, H2_RECT = makeText('Heurestic 2', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 400)
+    Euclidean_SURF, Euclidean_RECT = makeText('Euclidean', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 400)
     H3_SURF, H3_RECT = makeText('Heurestic 3', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 370)
     H4_SURF, H4_RECT = makeText('Heurestic 4', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 340)
     H5_SURF, H5_RECT = makeText('Heurestic 5', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 310)
@@ -105,8 +105,8 @@ def main():
                     #Choosing the heuristic \\Kamel
                     elif H1_RECT.collidepoint(event.pos):
                         BoardData.Solve(BoardData.H1)
-                    elif H2_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.H2)
+                    elif Euclidean_RECT.collidepoint(event.pos):
+                        BoardData.Solve(BoardData.Euclidean)
                     elif H3_RECT.collidepoint(event.pos):
                         BoardData.Solve(BoardData.H3)
                     elif H4_RECT.collidepoint(event.pos):
@@ -283,7 +283,7 @@ def drawBoard(board, message):
     DISPLAYSURF.blit(S4_SURF, S4_RECT)
     DISPLAYSURF.blit(S5_SURF, S5_RECT)
     DISPLAYSURF.blit(H1_SURF, H1_RECT)
-    DISPLAYSURF.blit(H2_SURF, H2_RECT)
+    DISPLAYSURF.blit(Euclidean_SURF, Euclidean_RECT)
     DISPLAYSURF.blit(H3_SURF, H3_RECT)
     DISPLAYSURF.blit(H4_SURF, H4_RECT)
     DISPLAYSURF.blit(H5_SURF, H5_RECT)

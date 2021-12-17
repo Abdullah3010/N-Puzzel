@@ -1,3 +1,4 @@
+import cmath
 class Board:
     UP = 'up'
     DOWN = 'down'
@@ -6,6 +7,7 @@ class Board:
 
     __Solution = []
     __Forantier = {}
+    __GoalBoard = []
 
     def __init__(self, N):
         self.__BoardSize = N
@@ -46,9 +48,10 @@ class Board:
             counter -= self.__BoardSize * (self.__BoardSize - 1) + self.__BoardSize - 1
 
         board[self.__BoardSize - 1][self.__BoardSize - 1] = None
+        self.__GoalBoard = board
         return board
     def Solve(self, H):
-        self.__Forantier.append(H(self.getBoard()) ,self.getBoard())
+        self.__Forantier.append(H(self.getBoard()))
         self.__Forantier.sort()
         self.__Forantier.pop()
         self.__Solution
@@ -59,8 +62,22 @@ class Board:
     def H1(self, board):
         return None
 
-    def H2(self, board):
-        return None
+    def Euclidean(self, board):
+        heuristic = 0
+        for x1 in range(self.__GoalBoard):
+            for y1 in range(self.__GoalBoard[0]):
+                found = False
+                for x2 in range(board):
+                    for y2 in range(board[0]):
+                        if self.__GoalBoard[x1][y1] == board[x2][y2]:
+                            found = True
+                            dx = int.__abs__(x2 - x1)
+                            dy = int.__abs__(y2 - y1)
+                            heuristic += int.__floor__(cmath.sqrt(dx*dx + dy*dy))
+                            break
+                if(found):
+                    break
+        return heuristic
 
     def H3(self, board):
         return None
