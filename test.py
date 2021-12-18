@@ -22,7 +22,7 @@ x = c.initial_state()
 
 a = Board(3)
 x = a.getBoard()
-c = [[1,None,8],[3,6,2],[7,4,1]]
+c = [[1,4,7],[2,6,5],[3,None,8]]
 x = np.array(x)
 c = np.array(c)
 print(x)
@@ -30,4 +30,4 @@ print(c)
 row , col = np.where(x == 6)
 print(row[0])
 print(col[0])
-print(a.Hamming(c))
+print(a.Permutation(c))

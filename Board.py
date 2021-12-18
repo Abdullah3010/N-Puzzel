@@ -141,5 +141,15 @@ class Board:
             res += self.__count_conflicts(candidate_columns[i],solved_columns[i], self.__BoardSize)
         return res
 
-    def H5(self, board):
-        return None
+    def Permutation(self, board):
+        heuristic=0
+        board=np.array(board)
+        board=np.transpose(board).flatten()
+        for x in range(len(board)-1):
+            for y in range(x+1,len(board)):
+                if board[x] and board[y] and board[x] > board[y]:
+                    heuristic += 1
+    
+        if board[len(board)-1]:
+            heuristic +=1
+        return  heuristic
