@@ -13,8 +13,8 @@ from Board import Board
 
 
 # BoardData is a class for datastructure of the board which all data is stored in it and retreved from it \\Kamel
-BoardData = Board(5)
-board = BoardData.getBoard()
+BoardData = Board(3)
+Goal = BoardData.getBoard()
 
 WINDOWWIDTH = 740
 WINDOWHEIGHT = 480
@@ -128,7 +128,7 @@ def main():
                         mainBoard = generateNewPuzzle(random.randint(10, 100)) # clicked on New Game button
                         test = True
                     elif SOLVE_RECT.collidepoint(event.pos):
-                        resetAnimation(Board,solution)
+                        resetAnimation(mainBoard,solution)
 #                        drawBoard(mainBoard, None)
                         test = False
                     '''
@@ -194,8 +194,8 @@ def getBlankPosition(board):
 
 
 def makeMove(board, move):
+    # print(board)
     blankx, blanky = getBlankPosition(board)
-
     if move == UP and isValidMove(board, move):
         board[blankx][blanky], board[blankx][blanky + 1] = board[blankx][blanky + 1], board[blankx][blanky]
         BoardData.incMovCounter()
@@ -208,7 +208,8 @@ def makeMove(board, move):
     elif move == RIGHT and isValidMove(board, move):
         board[blankx][blanky], board[blankx - 1][blanky] = board[blankx - 1][blanky], board[blankx][blanky]
         BoardData.incMovCounter()
-
+    # print(board)
+    return board
 
 def isValidMove(board, move):
     blankx, blanky = getBlankPosition(board)
@@ -382,19 +383,30 @@ def resetAnimation(board, allMoves):
         makeMove(board, oppositeMove)
 
 def creatSearchSpace(state, heuristicF, parent=-1, lastmove=None):
-    if state == Board.getSolution():
-        return __Solution
-    __Space[__key] = [state, lastmove, parent]
-    pkey = __key
-    __key += 1
-    #possiblestates is a list of [boardstate, lastmove]
-    possiblestates = nextstate(state, lastmove)
-    for pstate in possiblestates:
-        heuristicvalue = heuristicF(pstate[0]) #pstate[0] represent boardstate
-        __Fronte.put((heuristicvalue, state, pstate[1])) #pstate[1] represent lastmove
-    NextState = __Fronte.get()
-    __Solution.append(NextState[2]) #NextState[2] represent lastmove
-    creatSearchSpace(NextState[1], heuristicF, pkey, NextState[2]) #NextState[1] represent boardstate NextState[2] represent lastmove
+    global __key, __Space
+    
+    # print(__Fronte.qsize())
+    print('-----------------------------------')
+    if state == Goal or __key == 10:
+        terminate()
+        #return __Solution
+    else:
+        # print(__Space)
+        __Space.update({__key:[state, heuristicF(state), lastmove, parent]})
+        # __Space[__key] = [state, heuristicF(state), lastmove, parent] 
+        pkey = __key
+        __key += 1
+        #possiblestates is a list of [boardstate, lastmove]
+        possiblestates = nextstate(state, lastmove)
+        #print(list(__Space.values())[0][0])
+        # print(possiblestates)
+        for pstate in possiblestates:
+            if pstate[0] not in list(__Space.values())[0][0]:
+                heuristicvalue = heuristicF(pstate[0]) #pstate[0] represent boardstate
+                __Fronte.put((heuristicvalue, state, pstate[1])) #pstate[1] represent lastmove
+        NextState = __Fronte.get()
+        __Solution.append(NextState[2]) #NextState[2] represent lastmove
+        creatSearchSpace(NextState[1], heuristicF, pkey, NextState[2]) #NextState[1] represent boardstate NextState[2] represent lastmove
 
 def nextstate(board, lastMove):
     validMoves = [UP, DOWN, LEFT, RIGHT]
@@ -409,6 +421,9 @@ def nextstate(board, lastMove):
     if lastMove == RIGHT or not isValidMove(board, LEFT):
         validMoves.remove(LEFT)
     for move in validMoves:
+        print(board)
+        print(nextstates)
+        print('#'*20)
         nextstates.append([makeMove(board, move), move])
     return nextstates
 

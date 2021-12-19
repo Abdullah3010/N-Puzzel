@@ -3,23 +3,25 @@ import math as m
 import numpy as np
 
 class Heuristic:
-    def Hamming(self, board):
+    
+    def Hamming(board):
         heuristic = 0
-        for x in range(Board.getBOARDERSIZE()):
-            for y in range(Board.getBOARDERSIZE()):
-                if board[y][x] and self.__GoalBoard[y][x] != board[y][x]:
+        for x in range(len(board)):
+            for y in range(len(board)):
+                if board[y][x] and Board.getBoard()[y][x] != board[y][x]:
                     heuristic += 1
         return heuristic
 
-    def Euclidean(self, board):
+    def Euclidean(board):
+        b = Board(len(board))
         heuristic = 0
-        for x1 in range(Board.getBOARDERSIZE()):
-            for y1 in range(Board.getBOARDERSIZE()):
+        for x1 in range(len(board)):
+            for y1 in range(len(board)):
                 found = False
 
-                for x2 in range(Board.getBOARDERSIZE()):
-                    for y2 in range(Board.getBOARDERSIZE()):
-                        if self.__GoalBoard[x1][y1] == board[x2][y2]:
+                for x2 in range(len(board)):
+                    for y2 in range(len(board)):
+                        if b.getBoard()[x1][y1] == board[x2][y2]:
                             found = True
                             dx = int(m.fabs(x2 - x1))
                             dy = int(m.fabs(y2 - y1))
@@ -29,19 +31,19 @@ class Heuristic:
                         break
         return heuristic
 
-    def Manhattan(self, board):
+    def Manhattan(board):
         heuristic = 0
         board = np.array(board)
-        goal = np.array(self.__GoalBoard)
-        for x in range(Board.getBOARDERSIZE()):
-            for y in range(Board.getBOARDERSIZE()):
+        goal = np.array(Board.getBoard())
+        for x in range(len(board)):
+            for y in range(len(board)):
                 if board[y][x] and goal[y][x] != board[y][x]:
                     row, col = np.where(goal == board[y][x])
                     heuristic += abs(row[0] - x) + abs(col[0] - y)
         return heuristic
 
-    def __count_conflicts(self, candidate_row, solved_row, ans=0):
-        counts = [0 for x in range(Board.getBOARDERSIZE())]
+    def __count_conflicts(candidate_row, solved_row, ans=0):
+        counts = [0 for x in range(len(candidate_row))]
         for i, tile_1 in enumerate(candidate_row):
             if tile_1 in solved_row and tile_1 != 0:
                 for j, tile_2 in enumerate(candidate_row):
@@ -59,28 +61,28 @@ class Heuristic:
             ans += 1
             return self.__count_conflicts(candidate_row, solved_row, ans)
 
-    def linear_conflicts(self, board):
+    def linear_conflicts(board):
         board = np.array(board).flatten()
-        goal = np.array(self.__GoalBoard).flatten()
+        goal = np.array(Board.getBoard()).flatten()
         res = self.manhattan(board)
-        candidate_rows = [[] for y in range(Board.getBOARDERSIZE())]
-        candidate_columns = [[] for x in range(Board.getBOARDERSIZE())]
-        solved_rows = [[] for y in range(Board.getBOARDERSIZE())]
-        solved_columns = [[] for x in range(Board.getBOARDERSIZE())]
-        for y in range(Board.getBOARDERSIZE()):
-            for x in range(Board.getBOARDERSIZE()):
-                idx = (y * Board.getBOARDERSIZE()) + x
+        candidate_rows = [[] for y in range(len(board))]
+        candidate_columns = [[] for x in range(len(board))]
+        solved_rows = [[] for y in range(len(board))]
+        solved_columns = [[] for x in range(len(board))]
+        for y in range(len(board)):
+            for x in range(len(board)):
+                idx = (y * len(board)) + x
                 candidate_rows[y].append(board[idx])
                 candidate_columns[x].append(board[idx])
                 solved_rows[y].append(goal[idx])
                 solved_columns[x].append(goal[idx])
-        for i in range(Board.getBOARDERSIZE()):
-            res += self.__count_conflicts(candidate_rows[i], solved_rows[i], Board.getBOARDERSIZE())
-        for i in range(Board.getBOARDERSIZE()):
-            res += self.__count_conflicts(candidate_columns[i], solved_columns[i], Board.getBOARDERSIZE())
+        for i in range(len(board)):
+            res += self.__count_conflicts(candidate_rows[i], solved_rows[i], len(board))
+        for i in range(len(board)):
+            res += self.__count_conflicts(candidate_columns[i], solved_columns[i], len(board))
         return res
 
-    def Permutation(self, board):
+    def Permutation(board):
         heuristic = 0
         board = np.array(board)
         board = np.transpose(board).flatten()
