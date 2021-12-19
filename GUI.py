@@ -5,12 +5,15 @@
 
 import pygame, sys, random, Board
 from pygame.locals import *
+from Heuristic import Heuristic
+from queue import PriorityQueue as pq
+from Board import Board
 
 # Create the constants (go ahead and experiment with different values)
 
 
 # BoardData is a class for datastructure of the board which all data is stored in it and retreved from it \\Kamel
-BoardData = Board.Board(5)
+BoardData = Board(5)
 board = BoardData.getBoard()
 
 WINDOWWIDTH = 740
@@ -42,6 +45,12 @@ DOWN = 'down'
 LEFT = 'left'
 RIGHT = 'right'
 
+solution = []
+__Space = {}
+__Fronte = pq()
+__key = 0
+__Solution = []
+
 def main():
     global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, Euclidean_SURF, Euclidean_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, counterTextSURF, counterTextRECT, counterSURF, counterRECT, test
 
@@ -52,6 +61,7 @@ def main():
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     pygame.display.set_caption('N-Puzzle')
     BASICFONT = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
+
 
     # Store the option buttons and their rectangles in OPTIONS.
     RESET_SURF, RESET_RECT = makeText('Reset',    TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 90)
@@ -105,26 +115,28 @@ def main():
                         drawBoard(mainBoard, msg)
                     #Choosing the heuristic \\Kamel
                     elif H1_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.Hamming(),mainBoard)
+                        solution = creatSearchSpace(mainBoard, Heuristic.Hamming)
                     elif Euclidean_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.Euclidean,mainBoard)
+                        solution = creatSearchSpace(mainBoard, Heuristic.Euclidean)
                     elif H3_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.Manhattan,mainBoard)
+                        solution = creatSearchSpace(mainBoard, Heuristic.Manhattan)
                     elif H4_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.linear_conflicts,mainBoard)
+                        solution = creatSearchSpace(mainBoard, Heuristic.linear_conflicts)
                     elif H5_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.Permutation,mainBoard)
-                    elif RESET_RECT.collidepoint(event.pos):
-                        resetAnimation(mainBoard, allMoves) # clicked on Reset button
-                        allMoves = []
-                        test = True
+                        solution = creatSearchSpace(mainBoard, Heuristic.Permutation)
                     elif NEW_RECT.collidepoint(event.pos):
                         mainBoard = generateNewPuzzle(random.randint(10, 100)) # clicked on New Game button
                         test = True
                     elif SOLVE_RECT.collidepoint(event.pos):
-                        resetAnimation(Board,BoardData.getSolution())
-                        drawBoard(mainBoard, None)
+                        resetAnimation(Board,solution)
+#                        drawBoard(mainBoard, None)
                         test = False
+                    '''
+                    elif RESET_RECT.collidepoint(event.pos):
+                        resetAnimation(mainBoard, allMoves) # clicked on Reset button
+                        allMoves = []
+                        test = True
+                    '''
 
 
                 else:
@@ -219,7 +231,6 @@ def getRandomMove(board, lastMove=None):
         validMoves.remove(RIGHT)
     if lastMove == RIGHT or not isValidMove(board, LEFT):
         validMoves.remove(LEFT)
-    print(board)
     # return a random move from the list of remaining moves
     return random.choice(validMoves)
 
@@ -354,13 +365,10 @@ def generateNewPuzzle(numSlides):
         lastMove = move
     return board
 
-
 def resetAnimation(board, allMoves):
     # make all of the moves in allMoves in reverse.
-    revAllMoves = allMoves[:] # gets a copy of the list
-    revAllMoves.reverse()
 
-    for move in revAllMoves:
+    for move in allMoves:
         if move == UP:
             oppositeMove = DOWN
         elif move == DOWN:
@@ -373,6 +381,36 @@ def resetAnimation(board, allMoves):
         BoardData.resetMovCounter()
         makeMove(board, oppositeMove)
 
+def creatSearchSpace(state, heuristicF, parent=-1, lastmove=None):
+    if state == Board.getSolution():
+        return __Solution
+    __Space[__key] = [state, lastmove, parent]
+    pkey = __key
+    __key += 1
+    #possiblestates is a list of [boardstate, lastmove]
+    possiblestates = nextstate(state, lastmove)
+    for pstate in possiblestates:
+        heuristicvalue = heuristicF(pstate[0]) #pstate[0] represent boardstate
+        __Fronte.put((heuristicvalue, state, pstate[1])) #pstate[1] represent lastmove
+    NextState = __Fronte.get()
+    __Solution.append(NextState[2]) #NextState[2] represent lastmove
+    creatSearchSpace(NextState[1], heuristicF, pkey, NextState[2]) #NextState[1] represent boardstate NextState[2] represent lastmove
+
+def nextstate(board, lastMove):
+    validMoves = [UP, DOWN, LEFT, RIGHT]
+    nextstates = []
+    # remove moves from the list as they are disqualified
+    if lastMove == UP or not isValidMove(board, DOWN):
+        validMoves.remove(DOWN)
+    if lastMove == DOWN or not isValidMove(board, UP):
+        validMoves.remove(UP)
+    if lastMove == LEFT or not isValidMove(board, RIGHT):
+        validMoves.remove(RIGHT)
+    if lastMove == RIGHT or not isValidMove(board, LEFT):
+        validMoves.remove(LEFT)
+    for move in validMoves:
+        nextstates.append([makeMove(board, move), move])
+    return nextstates
 
 if __name__ == '__main__':
     main()
