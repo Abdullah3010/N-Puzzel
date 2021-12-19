@@ -1,5 +1,6 @@
 import numpy as np
 import math as m
+from queue import PriorityQueue as pq
 
 class Board:
     UP = 'up'
@@ -8,7 +9,7 @@ class Board:
     RIGHT = 'right'
 
     __Solution = []
-    __Forantier = {}
+    __Forantier = pq()
     __GoalBoard = []
 
     def __init__(self, N):
@@ -54,11 +55,12 @@ class Board:
         self.__GoalBoard = board
         return board
 
-    def Solve(self, H):
-        self.__Forantier.append(H(self.getBoard()))
-        self.__Forantier.sort()
-        self.__Forantier.pop()
-        self.__Solution
+    def Solve(self, H,board):
+        cost = H(board)
+        self.__Forantier.put((cost,board))
+               
+
+        
 
     def getSolution(self):
         return self.__Solution

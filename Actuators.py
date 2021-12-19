@@ -3,107 +3,79 @@ import copy
 
 class Actuators:
 
+    def get_zero_index(self,board):
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if not board[i][j]:
+                    x=i
+                    y=j
+        return x,y
 
-    def move_up(self,arr):
-        row_size=int(math.sqrt(len(arr) + 1))
-        emtpy_tile_index = arr.index(0)
-        result = copy.deepcopy(arr)
-        
-        if(not (emtpy_tile_index >= (len(arr) - row_size))):  # empty tile is not on the bottom
-             underlying_tile_index = emtpy_tile_index + row_size
-             underlying_tile = arr[underlying_tile_index]
-             result[emtpy_tile_index] = underlying_tile
-             result[underlying_tile_index] = 0
-             possible = True
+    
+    def move_up(self,board):
+        emtpy_tile_index=self.get_zero_index(board)
+        x=emtpy_tile_index[0]
+        y=emtpy_tile_index[1]       
+        check_bottom= (x == len(board)-1)
 
+        if(not check_bottom):   # empty tile is not on the bottom
+            board[x][y]=board[x+1][y]
+            board[x+1][y]=None
+            possible=True
         else:
-             possible = False
+            possible=False
 
-        return possible, result
-        
+        return possible, board
+
+    
+    
+    def move_down(self,board):
+        emtpy_tile_index=self.get_zero_index(board)
+        x=emtpy_tile_index[0]
+        y=emtpy_tile_index[1]    
+        check_top = (x==0)
+
+        if (not check_top):  # empty tile is not on the top
+            board[x][y]=board[x-1][y]
+            board[x-1][y]=None
+            possible = True
+        else:
+            possible = False
+
+        return possible, board
+
       
-            
-    def move_down(self,arr):
-        row_size=int(math.sqrt(len(arr) + 1))
-        emtpy_tile_index = arr.index(0)
-        result = copy.deepcopy(arr)
+     
 
-        if (not (emtpy_tile_index < row_size)):  # empty tile is not on the top
-            above_tile_index = emtpy_tile_index - row_size
-            underlying_tile = arr[above_tile_index]
-            result[emtpy_tile_index] = underlying_tile
-            result[above_tile_index] = 0
-            possible = True
-        else:
-            possible = False
+    def move_right(self,board):
+        emtpy_tile_index=self.get_zero_index(board)
+        x=emtpy_tile_index[0]
+        y=emtpy_tile_index[1]    
+        check_left = (y==0)
 
-        return possible, result
-
-
-
-    def move_left(self,arr):
-        row_size=int(math.sqrt(len(arr) + 1))
-        emtpy_tile_index = arr.index(0)
-        result = copy.deepcopy(arr)
-
-        if (not(emtpy_tile_index % row_size == row_size - 1)):  #empty tile is not on the righmost
-            right_tile_index = emtpy_tile_index + 1
-            right_tile = arr[right_tile_index]
-            result[emtpy_tile_index] = right_tile
-            result[right_tile_index] = 0
-            possible = True
-        else:
-            possible = False
-
-        return possible, result
-
-
-   
-    def move_right(self,arr):
-        row_size=int(math.sqrt(len(arr) + 1))
-        emtpy_tile_index = arr.index(0)
-        result = copy.deepcopy(arr)
-
-        if (not(emtpy_tile_index %  row_size == 0)):  # empty tile is not on the leftmost
-           right_tile_index= emtpy_tile_index - 1
-           right_tile = arr[right_tile_index]
-           result[emtpy_tile_index] = right_tile
-           result[right_tile_index] = 0
+        if (not check_left):  # empty tile is not on the leftmost
+           board[x][y]=board[x][y-1]
+           board[x][y-1]=None
            possible = True
         else:
            possible = False
 
-        return possible, result
+        return possible, board
 
 
 
+    def move_left(self,board):
+        emtpy_tile_index=self.get_zero_index(board)
+        x=emtpy_tile_index[0]
+        y=emtpy_tile_index[1]    
+        check_right = (y== len(board)-1)
 
+        if (not check_right):  #empty tile is not on the righmost
+            board[x][y]=board[x][y+1]
+            board[x][y+1]=None
+            possible = True
+        else:
+            possible = False
 
+        return possible, board
 
-
-    # def is_possible(self,direction,arr):
-
-    #     row_size=int(math.sqrt(len(arr) + 1))
-    #     index_of_emtpy_tile = arr.index(0)
-
-    #     if direction=="up":
-    #         return (index_of_emtpy_tile >= (len(arr) - row_size))
-    #     if direction=="down":
-    #         return (index_of_emtpy_tile < row_size)
-    #     if direction=="right":
-    #         return (index_of_emtpy_tile % row_size == 0)
-    #     if direction=="left":
-    #         return (index_of_emtpy_tile % row_size == row_size - 1)
-    
-
-
-    # for i in range(len(arr)):
-    #     for j in range(len(arr[0])):
-    #         if arr[i][j]==0:
-    #             x=i
-    #             y=j
-    
-
-
-
-    

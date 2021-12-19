@@ -11,6 +11,7 @@ from pygame.locals import *
 
 # BoardData is a class for datastructure of the board which all data is stored in it and retreved from it \\Kamel
 BoardData = Board.Board(5)
+board = BoardData.getBoard()
 
 WINDOWWIDTH = 740
 WINDOWHEIGHT = 480
@@ -104,15 +105,15 @@ def main():
                         drawBoard(mainBoard, msg)
                     #Choosing the heuristic \\Kamel
                     elif H1_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.H1)
+                        BoardData.Solve(BoardData.Hamming(),mainBoard)
                     elif Euclidean_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.Euclidean)
+                        BoardData.Solve(BoardData.Euclidean,mainBoard)
                     elif H3_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.H3)
+                        BoardData.Solve(BoardData.Manhattan,mainBoard)
                     elif H4_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.H4)
+                        BoardData.Solve(BoardData.linear_conflicts,mainBoard)
                     elif H5_RECT.collidepoint(event.pos):
-                        BoardData.Solve(BoardData.H5)
+                        BoardData.Solve(BoardData.Permutation,mainBoard)
                     elif RESET_RECT.collidepoint(event.pos):
                         resetAnimation(mainBoard, allMoves) # clicked on Reset button
                         allMoves = []
@@ -218,7 +219,7 @@ def getRandomMove(board, lastMove=None):
         validMoves.remove(RIGHT)
     if lastMove == RIGHT or not isValidMove(board, LEFT):
         validMoves.remove(LEFT)
-
+    print(board)
     # return a random move from the list of remaining moves
     return random.choice(validMoves)
 
