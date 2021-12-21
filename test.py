@@ -56,23 +56,26 @@
 # if __name__ == '__main__':
 #     main()
 
-SearchSpace = {0: [[[1, 4, 7], [2, None, 8], [3, 5, 6]], 3, None, -1], 1: [[[1, 4, 7], [2, 8, None], [3, 5, 6]], 3, 'up', 0], 2: [[[1, 4, 7], [None, 2, 8], [3, 5, 6]], 3, 'down', 0], 3: [[[1, 4, 7], [2, 5, 8], [3, None, 6]], 3, 'left', 0], 4: [[[1, None, 7], [2, 4, 8], [3, 5, 6]], 3, 'right', 0], 5: [[[1, 4, 7], [2, 5, 8], [3, 6, None]], 2, 'up', 3], 6: [[[1, 4, 7], [2, 5, 8], [None, 3, 6]], 2, 'down', 3]}
+# SearchSpace = {0: [[[1, 4, 7], [2, None, 8], [3, 5, 6]], 3, None, -1], 1: [[[1, 4, 7], [2, 8, None], [3, 5, 6]], 3, 'up', 0], 2: [[[1, 4, 7], [None, 2, 8], [3, 5, 6]], 3, 'down', 0], 3: [[[1, 4, 7], [2, 5, 8], [3, None, 6]], 3, 'left', 0], 4: [[[1, None, 7], [2, 4, 8], [3, 5, 6]], 3, 'right', 0], 5: [[[1, 4, 7], [2, 5, 8], [3, 6, None]], 2, 'up', 3], 6: [[[1, 4, 7], [2, 5, 8], [None, 3, 6]], 2, 'down', 3]}
 
-def getSolution():  # space is searchspace map of keys : [0:state, 1:heuristec value, 2:lastmove, 3:parentState key]
-    solution = list()
-    laststate = SearchSpace.popitem()
-    key = laststate[1][3]
-    solution.append(laststate[1][2])
-    print(key)
-    print(solution)
-    while True:
-        if (SearchSpace.get(key))[3] == -1:
-            print(solution)
-            return solution
-        solution.append(SearchSpace.get(key)[2])
-        print(solution)
-        key = SearchSpace.get(key)[3]
-        print(key)
-        print('*'*30)
+# def getSolution():  # space is searchspace map of keys : [0:state, 1:heuristec value, 2:lastmove, 3:parentState key]
+#     solution = list()
+#     laststate = SearchSpace.popitem()
+#     key = laststate[1][3]
+#     solution.append(laststate[1][2])
+#     print(key)
+#     print(solution)
+#     while True:
+#         if (SearchSpace.get(key))[3] == -1:
+#             print(solution)
+#             return solution
+#         solution.append(SearchSpace.get(key)[2])
+#         print(solution)
+#         key = SearchSpace.get(key)[3]
+#         print(key)
+#         print('*'*30)
 
-getSolution()
+# getSolution()
+
+
+c = [[], [], [] ,[]]

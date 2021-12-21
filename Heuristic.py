@@ -8,7 +8,7 @@ class Heuristic:
         heuristic = 0
         for x in range(len(board)):
             for y in range(len(board)):
-                if board[y][x] and Board.getBoard()[y][x] != board[y][x]:
+                if board[y][x] and Board(len(board)).getBoard()[y][x] != board[y][x]:
                     heuristic += 1
         return heuristic
 

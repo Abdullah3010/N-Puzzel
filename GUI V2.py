@@ -103,24 +103,28 @@ class GUI:
                         # check if the user clicked on an option button
                         # Determine which button was clicked \\Kamel
                         if S3_RECT.collidepoint(event.pos) and test:
-                            self.BoardData.setBOARDERSIZE(3)
+                            self.BoardData = Board(3)
                             self.BoardData.resetMovCounter()
                             mainBoard = self.BoardData.getBoard()
+                            self.Goal = self.BoardData.getBoard()
                             self.drawBoard(mainBoard, msg)
                         elif S4_RECT.collidepoint(event.pos) and test:
-                            self.BoardData.setBOARDERSIZE(4)
+                            self.BoardData = Board(4)
                             self.BoardData.resetMovCounter()
                             mainBoard = self.BoardData.getBoard()
+                            self.Goal = self.BoardData.getBoard()
                             self.drawBoard(mainBoard, msg)
                         elif S5_RECT.collidepoint(event.pos) and test:
-                            self.BoardData.setBOARDERSIZE(5)
+                            self.BoardData = Board(5)
                             self.BoardData.resetMovCounter()
                             mainBoard = self.BoardData.getBoard()
+                            self.Goal = self.BoardData.getBoard()
                             self.drawBoard(mainBoard, msg)
                         # Choosing the heuristic \\Kamel
                         elif H1_RECT.collidepoint(event.pos):
                             self.creatSearchSpace(mainBoard, Heuristic().Hamming)
                         elif Euclidean_RECT.collidepoint(event.pos):
+                            print(self.Goal)
                             self.creatSearchSpace(mainBoard, Heuristic().Euclidean)
                         elif H3_RECT.collidepoint(event.pos):
                             self.creatSearchSpace(mainBoard, Heuristic().Manhattan)
@@ -129,7 +133,7 @@ class GUI:
                         elif H5_RECT.collidepoint(event.pos):
                             self.creatSearchSpace(mainBoard, Heuristic().Permutation)
                         elif NEW_RECT.collidepoint(event.pos):
-                            mainBoard = self.generateNewPuzzle(random.randint(10, 50))  # clicked on New Game button
+                            mainBoard = self.generateNewPuzzle(random.randint(10, 20))  # clicked on New Game button
                             # print(mainBoard)
                             test = True
                         elif SOLVE_RECT.collidepoint(event.pos):
@@ -406,6 +410,7 @@ class GUI:
             self.makeMove(board, oppositeMove)
 
     def creatSearchSpace(self, state, heuristicF, parent=-1, lastmove=None):
+        # print(self.key)
         if state == self.Goal:
             print("Solved")
             self.Space.update({self.key: [deepcopy(state), heuristicF(state), lastmove, parent]})
