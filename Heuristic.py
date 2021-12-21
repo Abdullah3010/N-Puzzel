@@ -2,9 +2,9 @@ from Board import Board
 import math as m
 import numpy as np
 
+
 class Heuristic:
-    
-    def Hamming(board):
+    def Hamming(self, board):
         heuristic = 0
         for x in range(len(board)):
             for y in range(len(board)):
@@ -12,13 +12,12 @@ class Heuristic:
                     heuristic += 1
         return heuristic
 
-    def Euclidean(board):
+    def Euclidean(self, board):
         b = Board(len(board))
         heuristic = 0
         for x1 in range(len(board)):
             for y1 in range(len(board)):
                 found = False
-
                 for x2 in range(len(board)):
                     for y2 in range(len(board)):
                         if b.getBoard()[x1][y1] == board[x2][y2]:
@@ -31,7 +30,7 @@ class Heuristic:
                         break
         return heuristic
 
-    def Manhattan(board):
+    def Manhattan(self, board):
         heuristic = 0
         board = np.array(board)
         goal = np.array(Board.getBoard())
@@ -42,7 +41,7 @@ class Heuristic:
                     heuristic += abs(row[0] - x) + abs(col[0] - y)
         return heuristic
 
-    def __count_conflicts(candidate_row, solved_row, ans=0):
+    def __count_conflicts(self, candidate_row, solved_row, ans=0):
         counts = [0 for x in range(len(candidate_row))]
         for i, tile_1 in enumerate(candidate_row):
             if tile_1 in solved_row and tile_1 != 0:
@@ -61,7 +60,7 @@ class Heuristic:
             ans += 1
             return self.__count_conflicts(candidate_row, solved_row, ans)
 
-    def linear_conflicts(board):
+    def linear_conflicts(self, board):
         board = np.array(board).flatten()
         goal = np.array(Board.getBoard()).flatten()
         res = self.manhattan(board)
@@ -82,7 +81,7 @@ class Heuristic:
             res += self.__count_conflicts(candidate_columns[i], solved_columns[i], len(board))
         return res
 
-    def Permutation(board):
+    def Permutation(self, board):
         heuristic = 0
         board = np.array(board)
         board = np.transpose(board).flatten()

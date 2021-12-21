@@ -1,6 +1,5 @@
-import numpy as np
-import math as m
-from queue import PriorityQueue as pq
+from copy import deepcopy
+
 
 class Board:
     UP = 'up'
@@ -8,13 +7,18 @@ class Board:
     LEFT = 'left'
     RIGHT = 'right'
 
-    __Solution = []
-    __Forantier = pq()
-    __GoalBoard = []
-
     def __init__(self, N):
         self.__BoardSize = N
         self.__MovCounter = 0
+        self.__GoalBoard = list()
+        self.__SearchSpace = {}
+        self.__Solution = list()
+
+    def setSearchSpace(self, space):
+        self.__SearchSpace = deepcopy(space)
+
+    def getSolution(self):
+        return self.__Solution
 
     def setBOARDERSIZE(self, N):
         self.__BoardSize = N
@@ -23,14 +27,14 @@ class Board:
         return self.__BoardSize
 
     def getTILESIZE(self):
-        return int(250/self.__BoardSize)
+        return int(250 / self.__BoardSize)
 
     def getMovCounter(self):
         return self.__MovCounter
 
     def incMovCounter(self):
         self.__MovCounter += 1
-        
+
     def resetMovCounter(self):
         self.__MovCounter = 0
 
@@ -38,7 +42,7 @@ class Board:
         # Return a board data structure with tiles in the solved state.
         # For example, if BOARDWIDTH and BOARDHEIGHT are both 3, this function
         # returns [[1, 4, 7], [2, 5, 8], [3, 6, BLANK]]
-        
+
         self.__MovCounter = 0
         counter = 1
         board = []
@@ -55,14 +59,15 @@ class Board:
         self.__GoalBoard = board
         return board
 
-    def Solve(self, H,board):
-        cost = H(board)
-        self.__Forantier.put((cost,board))
-               
-
-        
-
-    def getSolution(self):
-        return self.__Solution
+    def makesolutionpath(
+            self):  # space is searchspace map of keys : [0:state, 1:heuristec value, 2:lastmove, 3:parentState key]
+        laststate = self.__SearchSpace.popitem()
+        key = laststate[1][3]
+        self.__Solution.append(laststate[1][2])
+        while True:
+            if (self.__SearchSpace.get(key))[3] == -1:
+                break
+            self.__Solution.append(self.__SearchSpace.get(key)[2])
+            key = self.__SearchSpace.get(key)[3]
 
 
