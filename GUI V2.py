@@ -7,7 +7,6 @@ import pygame, sys, random
 from pygame.locals import *
 from copy import deepcopy
 from operator import itemgetter
-import numpy as np
 from Heuristic import Heuristic
 from Board import Board
 
@@ -130,7 +129,7 @@ class GUI:
                         elif H5_RECT.collidepoint(event.pos):
                             self.creatSearchSpace(mainBoard, Heuristic().Permutation)
                         elif NEW_RECT.collidepoint(event.pos):
-                            mainBoard = self.generateNewPuzzle(random.randint(10, 11))  # clicked on New Game button
+                            mainBoard = self.generateNewPuzzle(random.randint(10, 50))  # clicked on New Game button
                             # print(mainBoard)
                             test = True
                         elif SOLVE_RECT.collidepoint(event.pos):
@@ -140,8 +139,8 @@ class GUI:
                             # print(ss)
                             # print(self.BoardData.getSolution())
                             # print(ss)
-                            self.BoardData.makesolutionpath()
                             ss = self.correctsoltion(self.BoardData.getSolution())
+                            print(ss)
                             self.resetAnimation(mainBoard, ss)
                             self.drawBoard(mainBoard, "solved")
                             test = False
@@ -407,45 +406,25 @@ class GUI:
             self.makeMove(board, oppositeMove)
 
     def creatSearchSpace(self, state, heuristicF, parent=-1, lastmove=None):
-        # print(self.Space.get(self.key-1))
-        # print(self.key)
-        # print('-----------------------------------')
-        if state == self.Goal or self.key == 10:
-            # print("solved \n"+str(self.solution))
-            if self.key == 10:
-                print("Terminated")
-                # print(self.Space)
-                # print(self.key)
-                # print(len(self.solution))
-                self.terminate()
-            else:
-                print("Solved")
-                self.Space.update({self.key: [deepcopy(state), heuristicF(state), lastmove, parent]})
-                (self.BoardData).setSearchSpace(self.Space)
-                # self.BoardData.setSolution(self.solution)
-            # return self.solution
+        if state == self.Goal:
+            print("Solved")
+            self.Space.update({self.key: [deepcopy(state), heuristicF(state), lastmove, parent]})
+            self.BoardData.setSearchSpace(self.Space)
         else:
             if self.key == 0:
                 self.Space.update({self.key: [deepcopy(state), heuristicF(state), lastmove, parent]})
                 parent = self.key
                 self.key += 1
             self.CloseList.append(state)
-            # possiblestates is a list of [boardstate, lastmove]
-            possiblestates = self.nextstate(state, lastmove)
-            print(possiblestates)
+            possiblestates = self.nextstate(state, lastmove)  # possiblestates is a list of [boardstate, lastmove]
             for pstate in possiblestates:
                 if pstate[0] not in self.CloseList:
                     heuristicvalue = heuristicF(pstate[0])  # pstate[0] represent boardstate
-                    self.Space.update({self.key: [deepcopy(pstate[0]), heuristicF(state), pstate[1], parent]})
+                    self.Space.update({self.key: [deepcopy(pstate[0]), heuristicvalue, pstate[1], parent]})
                     self.Fronte.append([heuristicvalue, self.key, pstate[1]])
                     self.key += 1
-            print(self.Space)
-            print('-'*50)
             self.Fronte = sorted(self.Fronte, key=itemgetter(0), reverse=True)
             NextState = self.Fronte.pop()
-            # print(NextState)
-            # self.solution.append(NextState[2])
-            # # print(self.solution) #NextState[2] represent lastmove
             self.creatSearchSpace(self.Space.get(NextState[1])[0], heuristicF, parent = NextState[1], lastmove = NextState[2])  # NextState[1] represent boardstate NextState[2] represent lastmove
 
     def nextstate(self, board, lastMove):

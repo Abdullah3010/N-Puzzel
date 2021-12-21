@@ -18,6 +18,8 @@ class Board:
         self.__SearchSpace = deepcopy(space)
 
     def getSolution(self):
+        self.makesolutionpath()
+        self.__Solution.reverse()
         return self.__Solution
 
     def setBOARDERSIZE(self, N):
@@ -59,11 +61,10 @@ class Board:
         self.__GoalBoard = board
         return board
 
-    def makesolutionpath(
-            self):  # space is searchspace map of keys : [0:state, 1:heuristec value, 2:lastmove, 3:parentState key]
+    def makesolutionpath(self):  # space is searchspace map of keys : [0:state, 1:heuristec value, 2:lastmove, 3:parentState key]
         laststate = self.__SearchSpace.popitem()
         key = laststate[1][3]
-        self.__Solution.append(laststate[1][2])
+        # self.__Solution.append(laststate[1][2])
         while True:
             if (self.__SearchSpace.get(key))[3] == -1:
                 break
