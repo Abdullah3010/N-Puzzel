@@ -21,8 +21,8 @@ class Creator:
 
         #copy the distinct array in matrix  
         index = 0
-        for i in range(0,self.N):
-            for j in range(0,self.N):
+        for j in range(0,self.N):
+            for i in range(0,self.N):
                 initState[i][j] = a[index]
                 index = index+1 
         return initState
