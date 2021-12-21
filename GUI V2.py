@@ -24,6 +24,7 @@ class GUI:
         self.key = 0
         self.Goal = self.BoardData.getBoard()
         self.CloseList = list()
+        self.allMoves = list()  
 
     WINDOWWIDTH = 740
     WINDOWHEIGHT = 480
@@ -57,9 +58,9 @@ class GUI:
     RIGHT = 'right'
 
     def main(self):
-        global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, Euclidean_SURF, Euclidean_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, counterTextSURF, counterTextRECT, counterSURF, counterRECT, test
+        global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, Euclidean_SURF, Euclidean_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, counterTextSURF, counterTextRECT, counterSURF, counterRECT, resizeable
 
-        test = True  # variable to check wither the puzzle size is chosen or not to disaple updating it while working
+        resizeable = True  # variable to check wither the puzzle size is chosen or not to disaple updating it while working
         msg = 'Choose "Puzzle size" then choose "Heuristic" then press SOLVE'
         pygame.init()
         FPSCLOCK = pygame.time.Clock()
@@ -87,11 +88,10 @@ class GUI:
 
         SOLVEDBOARD = deepcopy(mainBoard)  # a solved board is the same as the board in a start state.
 
-        allMoves = []  # list of moves made from the solved configuration
 
         while True:  # main game loop
             slideTo = None  # the direction, if any, a tile should slide
-            if mainBoard == SOLVEDBOARD and not test:
+            if mainBoard == SOLVEDBOARD and not resizeable:
                 msg = 'Solved!'
 
             self.checkForQuit()
@@ -102,19 +102,19 @@ class GUI:
                     if (spotx, spoty) == (None, None):
                         # check if the user clicked on an option button
                         # Determine which button was clicked \\Kamel
-                        if S3_RECT.collidepoint(event.pos) and test:
+                        if S3_RECT.collidepoint(event.pos) and resizeable:
                             self.BoardData = Board(3)
                             self.BoardData.resetMovCounter()
                             mainBoard = self.BoardData.getBoard()
                             self.Goal = self.BoardData.getBoard()
                             self.drawBoard(mainBoard, msg)
-                        elif S4_RECT.collidepoint(event.pos) and test:
+                        elif S4_RECT.collidepoint(event.pos) and resizeable:
                             self.BoardData = Board(4)
                             self.BoardData.resetMovCounter()
                             mainBoard = self.BoardData.getBoard()
                             self.Goal = self.BoardData.getBoard()
                             self.drawBoard(mainBoard, msg)
-                        elif S5_RECT.collidepoint(event.pos) and test:
+                        elif S5_RECT.collidepoint(event.pos) and resizeable:
                             self.BoardData = Board(5)
                             self.BoardData.resetMovCounter()
                             mainBoard = self.BoardData.getBoard()
@@ -134,31 +134,23 @@ class GUI:
                             self.creatSearchSpace(mainBoard, Heuristic().Permutation)
                         elif NEW_RECT.collidepoint(event.pos):
                             mainBoard = self.generateNewPuzzle(random.randint(10, 20))  # clicked on New Game button
-                            # print(mainBoard)
-                            test = True
                         elif SOLVE_RECT.collidepoint(event.pos):
-                            # print(move)
-                            # for i in self.BoardData.getSolution():
-                            #     self.makeMove(mainBoard, i)
-                            # print(ss)
-                            # print(self.BoardData.getSolution())
-                            # print(ss)
+                            resizeable = False
                             ss = self.correctsoltion(self.BoardData.getSolution())
-                            print(ss)
                             self.resetAnimation(mainBoard, ss)
-                            self.drawBoard(mainBoard, "solved")
-                            test = False
-                        '''
+                            # self.drawBoard(mainBoard, "solved")
+                            self.solution.clear()
+                            self.Space.clear()
+                            self.Fronte.clear()
+                            self.key = 0
+                            self.CloseList.clear()
+                            resizeable = True
                         elif RESET_RECT.collidepoint(event.pos):
-                            resetAnimation(mainBoard, allMoves) # clicked on Reset button
-                            allMoves = []
-                            test = True
-                        '''
-
-
+                            self.allMoves.reverse()
+                            self.resetAnimation(mainBoard, self.allMoves) # clicked on Reset button
+                            self.allMoves = list()
                     else:
                         # check if the clicked tile was next to the blank spot
-
                         blankx, blanky = self.getBlankPosition(mainBoard)
                         if spotx == blankx + 1 and spoty == blanky:
                             slideTo = self.LEFT
@@ -183,7 +175,7 @@ class GUI:
             if slideTo:
                 self.slideAnimation(mainBoard, slideTo, msg, 8)  # show slide on screen
                 self.makeMove(mainBoard, slideTo)
-                allMoves.append(slideTo)  # record the slide
+                self.allMoves.append(slideTo)  # record the slide
             pygame.display.update()
             FPSCLOCK.tick(self.FPS)
 
@@ -372,11 +364,11 @@ class GUI:
         lastMove = None
         for i in range(numSlides):
             move = self.getRandomMove(board, lastMove)
-            self.slideAnimation(board, move, 'Generating new puzzle...',
-                                animationSpeed=int(self.BoardData.getTILESIZE() / 3))
+            self.slideAnimation(board, move, 'Generating new puzzle...',animationSpeed=int(self.BoardData.getTILESIZE() / 3))
             self.makeMove(board, move)
             self.BoardData.resetMovCounter()
             lastMove = move
+            self.allMoves.append(move)
         return board
 
     def correctsoltion(self, moves):
