@@ -33,7 +33,7 @@ class Heuristic:
     def Manhattan(self, board):
         heuristic = 0
         board = np.array(board)
-        goal = np.array(Board.getBoard())
+        goal = np.array(Board(len(board)).getBoard())
         for x in range(len(board)):
             for y in range(len(board)):
                 if board[y][x] and goal[y][x] != board[y][x]:
@@ -61,9 +61,9 @@ class Heuristic:
             return self.__count_conflicts(candidate_row, solved_row, ans)
 
     def linear_conflicts(self, board):
+        res = self.Manhattan(board)
         board = np.array(board).flatten()
-        goal = np.array(Board.getBoard()).flatten()
-        res = self.manhattan(board)
+        goal = np.array(Board(len(board)).getBoard()).flatten()
         candidate_rows = [[] for y in range(len(board))]
         candidate_columns = [[] for x in range(len(board))]
         solved_rows = [[] for y in range(len(board))]

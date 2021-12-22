@@ -22,9 +22,11 @@ class GUI:
         self.Space = {}
         self.Fronte = list()
         self.key = 0
+        self.counter = 0
         self.Goal = self.BoardData.getBoard()
         self.CloseList = list()
-        self.allMoves = list()  
+        self.allMoves = list()
+        self.solved = False
 
     WINDOWWIDTH = 740
     WINDOWHEIGHT = 480
@@ -58,7 +60,7 @@ class GUI:
     RIGHT = 'right'
 
     def main(self):
-        global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, H1_SURF, H1_RECT, Euclidean_SURF, Euclidean_RECT, H3_SURF, H3_RECT, H4_SURF, H4_RECT, H5_SURF, H5_RECT, counterTextSURF, counterTextRECT, counterSURF, counterRECT, resizeable
+        global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT, S3_SURF, S3_RECT, S4_SURF, S4_RECT, S5_SURF, S5_RECT, Hamming_SURF, Hamming_RECT, Euclidean_SURF, Euclidean_RECT, Manhattan_SURF, Manhattan_RECT, linear_conflicts_SURF, linear_conflicts_RECT, Permutation_SURF, Permutation_RECT, counterTextSURF, counterTextRECT, counterSURF, counterRECT, resizeable
 
         resizeable = True  # variable to check wither the puzzle size is chosen or not to disaple updating it while working
         msg = 'Choose "Puzzle size" then choose "Heuristic" then press SOLVE'
@@ -75,13 +77,13 @@ class GUI:
         S3_SURF, S3_RECT = self.makeText('8-Puzzle', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 700, self.WINDOWHEIGHT - 300)
         S4_SURF, S4_RECT = self.makeText('16-Puzzle', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 700, self.WINDOWHEIGHT - 260)
         S5_SURF, S5_RECT = self.makeText('24-Puzzle', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 700, self.WINDOWHEIGHT - 220)
-        H1_SURF, H1_RECT = self.makeText('Heurestic 1', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 120, self.WINDOWHEIGHT - 430)
-        Euclidean_SURF, Euclidean_RECT = self.makeText('Euclidean', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 120, self.WINDOWHEIGHT - 400)
-        H3_SURF, H3_RECT = self.makeText('Heurestic 3', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 120, self.WINDOWHEIGHT - 370)
-        H4_SURF, H4_RECT = self.makeText('Heurestic 4', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 120, self.WINDOWHEIGHT - 340)
-        H5_SURF, H5_RECT = self.makeText('Heurestic 5', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 120, self.WINDOWHEIGHT - 310)
+        Hamming_SURF, Hamming_RECT = self.makeText('Hamming', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 170, self.WINDOWHEIGHT - 430)
+        Euclidean_SURF, Euclidean_RECT = self.makeText('Euclidean', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 170, self.WINDOWHEIGHT - 400)
+        Manhattan_SURF, Manhattan_RECT = self.makeText('Manhattan', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 170, self.WINDOWHEIGHT - 370)
+        linear_conflicts_SURF, linear_conflicts_RECT = self.makeText('Linear Conflicts', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 170, self.WINDOWHEIGHT - 340)
+        Permutation_SURF, Permutation_RECT = self.makeText('Permutation', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 170, self.WINDOWHEIGHT - 310)
         counterTextSURF, counterTextRECT = self.makeText("Number of Moves", self.MESSAGECOLOR, self.BGCOLOR, 5, 30)
-        counterSURF, counterRECT = self.makeText(str(self.BoardData.getMovCounter()), self.MESSAGECOLOR, self.BGCOLOR, 190, 30)
+        counterSURF, counterRECT = self.makeText(str(self.counter), self.MESSAGECOLOR, self.BGCOLOR, 190, 30)
 
         mainBoard = deepcopy(self.Goal)
         self.drawBoard(mainBoard, msg)  # Draw starting board as goal board
@@ -121,21 +123,21 @@ class GUI:
                             self.Goal = self.BoardData.getBoard()
                             self.drawBoard(mainBoard, msg)
                         # Choosing the heuristic \\Kamel
-                        elif H1_RECT.collidepoint(event.pos):
+                        elif Hamming_RECT.collidepoint(event.pos):
                             self.creatSearchSpace(mainBoard, Heuristic().Hamming)
                         elif Euclidean_RECT.collidepoint(event.pos):
-                            print(self.Goal)
                             self.creatSearchSpace(mainBoard, Heuristic().Euclidean)
-                        elif H3_RECT.collidepoint(event.pos):
+                        elif Manhattan_RECT.collidepoint(event.pos):
                             self.creatSearchSpace(mainBoard, Heuristic().Manhattan)
-                        elif H4_RECT.collidepoint(event.pos):
+                        elif linear_conflicts_RECT.collidepoint(event.pos):
                             self.creatSearchSpace(mainBoard, Heuristic().linear_conflicts)
-                        elif H5_RECT.collidepoint(event.pos):
+                        elif Permutation_RECT.collidepoint(event.pos):
                             self.creatSearchSpace(mainBoard, Heuristic().Permutation)
                         elif NEW_RECT.collidepoint(event.pos):
                             mainBoard = self.generateNewPuzzle(random.randint(10, 20))  # clicked on New Game button
                         elif SOLVE_RECT.collidepoint(event.pos):
                             resizeable = False
+                            self.solved = True
                             ss = self.correctsoltion(self.BoardData.getSolution())
                             self.resetAnimation(mainBoard, ss)
                             # self.drawBoard(mainBoard, "solved")
@@ -145,6 +147,7 @@ class GUI:
                             self.key = 0
                             self.CloseList.clear()
                             resizeable = True
+                            self.solved = False
                         elif RESET_RECT.collidepoint(event.pos):
                             self.allMoves.reverse()
                             self.resetAnimation(mainBoard, self.allMoves) # clicked on Reset button
@@ -199,23 +202,32 @@ class GUI:
                     return (x, y)
 
     def makeMove(self, board, move):
+        global counterSURF, counterRECT
         blankx, blanky = self.getBlankPosition(board)
         # print('*' * 50)
         # print(str(np.transpose(np.array(board))) + "\n?????????????????????\n" + str(np.array(board)))
         # print('Blank of x:' + str(blankx) + '\nBlank of y:' + str(blanky))
         # print('*' * 50)
         if move == self.UP and self.isValidMove(board, move):
+            if self.solved:
+                self.counter += 1
             board[blankx][blanky], board[blankx][blanky + 1] = board[blankx][blanky + 1], board[blankx][blanky]
-            self.BoardData.incMovCounter()
         elif move == self.DOWN and self.isValidMove(board, move):
+            if self.solved:
+                self.counter += 1
             board[blankx][blanky], board[blankx][blanky - 1] = board[blankx][blanky - 1], board[blankx][blanky]
-            self.BoardData.incMovCounter()
         elif move == self.LEFT and self.isValidMove(board, move):
+            if self.solved:
+                self.counter += 1
             board[blankx][blanky], board[blankx + 1][blanky] = board[blankx + 1][blanky], board[blankx][blanky]
-            self.BoardData.incMovCounter()
         elif move == self.RIGHT and self.isValidMove(board, move):
+            if self.solved:
+                self.counter += 1
             board[blankx][blanky], board[blankx - 1][blanky] = board[blankx - 1][blanky], board[blankx][blanky]
-            self.BoardData.incMovCounter()
+        if self.solved:
+            print(self.counter)
+            counterSURF, counterRECT = self.makeText(str(self.counter), self.MESSAGECOLOR, self.BGCOLOR, 190, 30)
+            DISPLAYSURF.blit(counterSURF, counterRECT)
         return board
 
     def isValidMove(self, board, move):
@@ -298,11 +310,11 @@ class GUI:
         DISPLAYSURF.blit(S3_SURF, S3_RECT)
         DISPLAYSURF.blit(S4_SURF, S4_RECT)
         DISPLAYSURF.blit(S5_SURF, S5_RECT)
-        DISPLAYSURF.blit(H1_SURF, H1_RECT)
+        DISPLAYSURF.blit(Hamming_SURF, Hamming_RECT)
         DISPLAYSURF.blit(Euclidean_SURF, Euclidean_RECT)
-        DISPLAYSURF.blit(H3_SURF, H3_RECT)
-        DISPLAYSURF.blit(H4_SURF, H4_RECT)
-        DISPLAYSURF.blit(H5_SURF, H5_RECT)
+        DISPLAYSURF.blit(Manhattan_SURF, Manhattan_RECT)
+        DISPLAYSURF.blit(linear_conflicts_SURF, linear_conflicts_RECT)
+        DISPLAYSURF.blit(Permutation_SURF, Permutation_RECT)
 
         DISPLAYSURF.blit(counterTextSURF, counterTextRECT)
         counterSURF, counterRECT = self.makeText(str(self.BoardData.getMovCounter()), self.MESSAGECOLOR, self.BGCOLOR,
@@ -404,6 +416,7 @@ class GUI:
     def creatSearchSpace(self, state, heuristicF, parent=-1, lastmove=None):
         # print(self.key)
         if state == self.Goal:
+            print(self.CloseList)
             print("Solved")
             self.Space.update({self.key: [deepcopy(state), heuristicF(state), lastmove, parent]})
             self.BoardData.setSearchSpace(self.Space)
