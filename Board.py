@@ -17,10 +17,16 @@ class Board:
     def setSearchSpace(self, space):
         self.__SearchSpace = deepcopy(space)
 
+    def getRestPath(self):
+        return self.__Solution
+
     def getSolution(self):
         self.makesolutionpath()
         self.__Solution.reverse()
         return self.__Solution
+
+    def clearSolution(self):
+        self.__Solution = list()
 
     def setBOARDERSIZE(self, N):
         self.__BoardSize = N
@@ -44,8 +50,7 @@ class Board:
         # Return a board data structure with tiles in the solved state.
         # For example, if BOARDWIDTH and BOARDHEIGHT are both 3, this function
         # returns [[1, 4, 7], [2, 5, 8], [3, 6, BLANK]]
-
-        self.__MovCounter = 0
+        self.resetMovCounter()
         counter = 1
         board = []
 

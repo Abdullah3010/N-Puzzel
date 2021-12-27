@@ -33,14 +33,15 @@ class Heuristic:
     def Manhattan(self, board):
         heuristic = 0
         board = np.array(board)
-        goal = np.array(Board(len(board)).getBoard())
+        b = Board(len(board))
+        goal = np.array(b.getBoard())
         for x in range(len(board)):
             for y in range(len(board)):
                 if board[y][x] and goal[y][x] != board[y][x]:
                     row, col = np.where(goal == board[y][x])
                     heuristic += abs(row[0] - x) + abs(col[0] - y)
         return heuristic
-
+    '''
     def __count_conflicts(self, candidate_row, solved_row, ans=0):
         counts = [0 for x in range(len(candidate_row))]
         for i, tile_1 in enumerate(candidate_row):
@@ -80,7 +81,7 @@ class Heuristic:
         for i in range(len(board)):
             res += self.__count_conflicts(candidate_columns[i], solved_columns[i], len(board))
         return res
-
+'''
     def Permutation(self, board):
         heuristic = 0
         board = np.array(board)
