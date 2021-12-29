@@ -13,6 +13,7 @@ class Board:
         self.__GoalBoard = list()
         self.__SearchSpace = {}
         self.__Solution = list()
+        self.resetpath = list()
 
     def setSearchSpace(self, space):
         self.__SearchSpace = deepcopy(space)
@@ -46,6 +47,12 @@ class Board:
     def resetMovCounter(self):
         self.__MovCounter = 0
 
+    def getrestpath(self):
+        return self.resetpath
+
+    def clearresetpath(self):
+        self.resetpath = list()
+
     def getBoard(self):
         # Return a board data structure with tiles in the solved state.
         # For example, if BOARDWIDTH and BOARDHEIGHT are both 3, this function
@@ -74,6 +81,7 @@ class Board:
             if (self.__SearchSpace.get(key))[3] == -1:
                 break
             self.__Solution.append(self.__SearchSpace.get(key)[2])
+            self.resetpath.append(self.__SearchSpace.get(key)[2])
             # self.__Solution.append(laststate[1][2])
             key = self.__SearchSpace.get(key)[3]
 
