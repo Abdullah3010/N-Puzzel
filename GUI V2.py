@@ -4,6 +4,7 @@ from copy import deepcopy
 from operator import itemgetter
 from Heuristic import Heuristic
 from Board import Board
+import tkinter.messagebox as pop
 
 
 class GUI:
@@ -131,8 +132,8 @@ class GUI:
                             self.creatSearchSpace(mainBoard, Heuristic().Permutation)
                             self.drawBoard(mainBoard, "Solution Path Found using permutation press solve")
                         elif compareAll_RECT.collidepoint(event.pos):
-                            print("Running")
                             results = list()
+<<<<<<< HEAD
                             self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Hamming)
                             results.append(len(self.BoardData.getSolution()))
                             self.BoardData.clearSolution()
@@ -152,21 +153,40 @@ class GUI:
                             print("Manhattan got '"+str(results[1])+"' Moves")
                             print("Euclidean got '"+str(results[2])+"' Moves")
                             print("Permutation got '"+str(results[3])+"' Moves")
+=======
+                            self.creatSearchSpace(mainBoard, Heuristic().Hamming)
+                            results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
+                            compareres = "Hamming got '"+str(results[0][0])+"' Moves\n"
+                            self.clearall()
+                            self.creatSearchSpace(mainBoard, Heuristic().Manhattan)
+                            results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
+                            compareres = compareres + "Manhattan got '"+str(results[1][0])+"' Moves\n"
+                            self.clearall()
+                            self.creatSearchSpace(mainBoard, Heuristic().Euclidean)
+                            results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
+                            compareres = compareres + "Euclidean got '"+str(results[2][0])+"' Moves\n"
+                            self.clearall()
+                            self.creatSearchSpace(mainBoard, Heuristic().Permutation)
+                            results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
+                            compareres = compareres + "Permutation got '"+str(results[3][0])+"' Moves"
+                            self.clearall()
+                            pop.showinfo('Compare results',compareres)
+>>>>>>> a8a160d51c0d6006395642053d943c5d6e501504
 
                         elif NEW_RECT.collidepoint(event.pos):
-                            mainBoard = self.generateNewPuzzle(random.randint(10, 20))  # clicked on New Game button
+                            mainBoard = self.generateNewPuzzle(random.randint(5, 15))  # clicked on New Game button
                             self.drawBoard(mainBoard, "Choose heuristic to solve the puzzle using it")
                         elif SOLVE_RECT.collidepoint(event.pos):
                             resizeable = False
                             self.solved = True
-                            ss = self.correctsoltion(self.BoardData.getSolution())
-                            self.resetAnimation(mainBoard, ss, solving=True)
+                            solutionpath = self.BoardData.getSolution()
+                            self.applysolution(mainBoard, solutionpath)
                             self.drawBoard(mainBoard, "solved")
-                            self.solution.clear()
-                            self.Space.clear()
-                            self.Fronte.clear()
+                            solutionpath = list()
+                            self.Fronte = list()
                             self.key = 0
-                            self.CloseList.clear()
+                            self.CloseList= list()
+                            self.Space = {}
                             resizeable = True
                             self.solved = False
                         elif RESET_RECT.collidepoint(event.pos):
@@ -199,10 +219,18 @@ class GUI:
                         slideTo = self.DOWN
 
             if slideTo:
-                self.slideAnimation(mainBoard, slideTo, msg, 8)  # show slide on screen
+                self.slideAnimation(mainBoard, slideTo, msg, 10)  # show slide on screen
                 self.makeMove(mainBoard, slideTo)
             pygame.display.update()
             FPSCLOCK.tick(self.FPS)
+
+    def clearall(self):
+        self.BoardData.clearSolution()
+        self.solution.clear()
+        self.Fronte = list()
+        self.key = 0
+        self.CloseList= list()
+        self.Space = {}
 
     def terminate(self):
         pygame.quit()
@@ -226,19 +254,19 @@ class GUI:
     def makeMove(self, board, move):
         global counterSURF, counterRECT
         blankx, blanky = self.getBlankPosition(board)
-        if move == self.UP and self.isValidMove(board, move):
+        if move == self.UP:
             if self.solved:
                 self.counter += 1
             board[blankx][blanky], board[blankx][blanky + 1] = board[blankx][blanky + 1], board[blankx][blanky]
-        elif move == self.DOWN and self.isValidMove(board, move):
+        elif move == self.DOWN:
             if self.solved:
                 self.counter += 1
             board[blankx][blanky], board[blankx][blanky - 1] = board[blankx][blanky - 1], board[blankx][blanky]
-        elif move == self.LEFT and self.isValidMove(board, move):
+        elif move == self.LEFT:
             if self.solved:
                 self.counter += 1
             board[blankx][blanky], board[blankx + 1][blanky] = board[blankx + 1][blanky], board[blankx][blanky]
-        elif move == self.RIGHT and self.isValidMove(board, move):
+        elif move == self.RIGHT:
             if self.solved:
                 self.counter += 1
             board[blankx][blanky], board[blankx - 1][blanky] = board[blankx - 1][blanky], board[blankx][blanky]
@@ -246,10 +274,14 @@ class GUI:
 
     def isValidMove(self, board, move):
         blankx, blanky = self.getBlankPosition(board)
-        return (move == self.UP and blanky != len(board[0]) - 1) or \
-               (move == self.DOWN and blanky != 0) or \
-               (move == self.LEFT and blankx != len(board) - 1) or \
-               (move == self.RIGHT and blankx != 0)
+        if move == self.UP:
+            return blanky != len(board[0]) - 1
+        elif move == self.DOWN:
+            return blanky != 0
+        elif move == self.LEFT:
+            return blankx != len(board) - 1
+        elif move == self.RIGHT:
+            return blankx != 0
 
     def getRandomMove(self, board, lastMove=None):
         # start with a full list of all four moves
@@ -393,31 +425,23 @@ class GUI:
             lastMove = move
         return board
 
-    def correctsoltion(self, moves):
-        correctsolution = list()
+    def applysolution(self, board, moves):
         for move in moves:
-            if move == self.UP:
-                correctsolution.append(self.DOWN)
-            elif move == self.DOWN:
-                correctsolution.append(self.UP)
-            elif move == self.RIGHT:
-                correctsolution.append(self.LEFT)
-            elif move == self.LEFT:
-                correctsolution.append(self.RIGHT)
-        return correctsolution
+            if self.isValidMove(board, move):
+                self.BoardData.incMovCounter()
+                self.slideAnimation(board, move, 'solving...', animationSpeed=int(self.BoardData.getTILESIZE() / 2))
+                self.makeMove(board, move)
 
-    def resetAnimation(self, board, moves, solving=False):
+    def resetAnimation(self, board, moves):
         # make all of the moves in allMoves in reverse.
         for move in moves:
-            if solving:
-                self.BoardData.incMovCounter()
-            if move == self.UP:
+            if move == self.UP and self.isValidMove(board, self.DOWN):
                 oppositeMove = self.DOWN
-            elif move == self.DOWN:
+            elif move == self.DOWN and self.isValidMove(board, self.UP):
                 oppositeMove = self.UP
-            elif move == self.RIGHT:
+            elif move == self.RIGHT and self.isValidMove(board, self.LEFT):
                 oppositeMove = self.LEFT
-            elif move == self.LEFT:
+            elif move == self.LEFT and self.isValidMove(board, self.RIGHT):
                 oppositeMove = self.RIGHT
             self.slideAnimation(board, oppositeMove, '', animationSpeed=int(self.BoardData.getTILESIZE() / 2))
             self.makeMove(board, oppositeMove)
@@ -425,8 +449,10 @@ class GUI:
     def creatSearchSpace(self, state, heuristicF, parent=-1, lastmove=None):
         solutionfound = False
         while not solutionfound:
+            #Processor is working in the background
+            # print(str(parent)+' : '+str(self.Space.get(parent)))
             if state == self.Goal:
-                self.Space.update({self.key: [deepcopy(state), heuristicF(state), lastmove, parent]})
+                self.Space.update({-2: [deepcopy(state), heuristicF(state), lastmove, parent]})
                 self.BoardData.setSearchSpace(self.Space)
                 solutionfound = True
             else:
@@ -447,7 +473,6 @@ class GUI:
                 state = self.Space.get(NextState[1])[0]
                 parent = NextState[1]
                 lastmove = NextState[2]
-                # self.creatSearchSpace(self.Space.get(NextState[1])[0], heuristicF, parent = NextState[1], lastmove = NextState[2])  # NextState[1] represent boardstate NextState[2] represent lastmove
 
     def nextstate(self, board, lastMove):
         validMoves = [self.UP, self.DOWN, self.LEFT, self.RIGHT]

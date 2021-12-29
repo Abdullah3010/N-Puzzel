@@ -74,6 +74,7 @@ class Board:
             if (self.__SearchSpace.get(key))[3] == -1:
                 break
             self.__Solution.append(self.__SearchSpace.get(key)[2])
+            # self.__Solution.append(laststate[1][2])
             key = self.__SearchSpace.get(key)[3]
 
 
