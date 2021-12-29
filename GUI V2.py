@@ -1,8 +1,3 @@
-# Slide Puzzle
-# By Al Sweigart al@inventwithpython.com
-# http://inventwithpython.com/pygame
-# Released under a "Simplified BSD" license
-
 import pygame, sys, random
 from pygame.locals import *
 from copy import deepcopy
@@ -138,19 +133,19 @@ class GUI:
                         elif compareAll_RECT.collidepoint(event.pos):
                             print("Running")
                             results = list()
-                            self.creatSearchSpace(mainBoard, Heuristic().Hamming)
+                            self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Hamming)
                             results.append(len(self.BoardData.getSolution()))
                             self.BoardData.clearSolution()
                             print("stil Running ...")
-                            self.creatSearchSpace(mainBoard, Heuristic().Manhattan)
+                            self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Manhattan)
                             results.append(len(self.BoardData.getSolution()))
                             self.BoardData.clearSolution()
                             print("stil Running ...")
-                            self.creatSearchSpace(mainBoard, Heuristic().Euclidean)
+                            self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Euclidean)
                             results.append(len(self.BoardData.getSolution()))
                             self.BoardData.clearSolution()
                             print("stil Running ...")
-                            self.creatSearchSpace(mainBoard, Heuristic().Permutation)
+                            self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Permutation)
                             results.append(len(self.BoardData.getSolution()))
                             self.BoardData.clearSolution()
                             print("Hamming got '"+str(results[0])+"' Moves")
