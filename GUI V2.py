@@ -133,27 +133,6 @@ class GUI:
                             self.drawBoard(mainBoard, "Solution Path Found using permutation press solve")
                         elif compareAll_RECT.collidepoint(event.pos):
                             results = list()
-<<<<<<< HEAD
-                            self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Hamming)
-                            results.append(len(self.BoardData.getSolution()))
-                            self.BoardData.clearSolution()
-                            print("stil Running ...")
-                            self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Manhattan)
-                            results.append(len(self.BoardData.getSolution()))
-                            self.BoardData.clearSolution()
-                            print("stil Running ...")
-                            self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Euclidean)
-                            results.append(len(self.BoardData.getSolution()))
-                            self.BoardData.clearSolution()
-                            print("stil Running ...")
-                            self.creatSearchSpace(deepcopy(mainBoard), Heuristic().Permutation)
-                            results.append(len(self.BoardData.getSolution()))
-                            self.BoardData.clearSolution()
-                            print("Hamming got '"+str(results[0])+"' Moves")
-                            print("Manhattan got '"+str(results[1])+"' Moves")
-                            print("Euclidean got '"+str(results[2])+"' Moves")
-                            print("Permutation got '"+str(results[3])+"' Moves")
-=======
                             self.creatSearchSpace(mainBoard, Heuristic().Hamming)
                             results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
                             compareres = "Hamming got '"+str(results[0][0])+"' Moves\n"
@@ -171,7 +150,6 @@ class GUI:
                             compareres = compareres + "Permutation got '"+str(results[3][0])+"' Moves"
                             self.clearall()
                             pop.showinfo('Compare results',compareres)
->>>>>>> a8a160d51c0d6006395642053d943c5d6e501504
 
                         elif NEW_RECT.collidepoint(event.pos):
                             mainBoard = self.generateNewPuzzle(random.randint(5, 15))  # clicked on New Game button
