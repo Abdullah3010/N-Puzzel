@@ -11,7 +11,7 @@ from copy import deepcopy
 from operator import itemgetter
 from Heuristic import Heuristic
 from Board import Board
-import tkinter.messagebox as pop
+import tkinter.messagebox as show
 
 
 class GUI:
@@ -172,7 +172,7 @@ class GUI:
                             results.append([len(solutionpath), solutionpath])
                             self.clearall()
                             compareres = compareres + "Permutation got '"+str(results[3][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS).microseconds/math.pow(10,6))+" seconds\nSolution Path: "+str(results[3][1])+"\n*****************\n"
-                            pop.showinfo('Compare results', compareres)
+                            show.showinfo('Compare results', compareres)
 
                         elif NEW_RECT.collidepoint(event.pos):
                             mainBoard = self.generateNewPuzzle(random.randint(5, 15))  # clicked on New Game button
