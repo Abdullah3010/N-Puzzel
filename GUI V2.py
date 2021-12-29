@@ -159,7 +159,7 @@ class GUI:
                             print(self.BoardData.getSolution())
                             results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
                             self.clearall()
-                            compareres = compareres + "Euclidean got '"+str(results[2][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS))+"\n*****************\n"
+                            compareres = compareres + "Euclidean got '"+str(results[2][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS)*100)+"\n*****************\n"
                             TimerS = datetime.time()
                             self.creatSearchSpace(mainBoard, Heuristic().Permutation)
                             TimerE = datetime.time()
