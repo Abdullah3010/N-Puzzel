@@ -1,4 +1,10 @@
-import pygame, sys, random
+# Slide Puzzle
+# By Al Sweigart al@inventwithpython.com
+# http://inventwithpython.com/pygame
+# Released under a "Simplified BSD" license
+
+import pygame, sys, random, timeit
+from datetime import datetime
 from pygame.locals import *
 from copy import deepcopy
 from operator import itemgetter
@@ -133,23 +139,35 @@ class GUI:
                             self.drawBoard(mainBoard, "Solution Path Found using permutation press solve")
                         elif compareAll_RECT.collidepoint(event.pos):
                             results = list()
+                            TimerS = datetime.time()
                             self.creatSearchSpace(mainBoard, Heuristic().Hamming)
+                            TimerE = datetime.time()
+                            print(self.BoardData.getSolution())
                             results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
-                            compareres = "Hamming got '"+str(results[0][0])+"' Moves\n"
                             self.clearall()
+                            compareres = "Hamming got '" + str(results[0][0]) + "' Moves\nTime taken to find path: "+str((TimerE-TimerS))+"\n*****************\n"
+                            TimerS = datetime.time()
                             self.creatSearchSpace(mainBoard, Heuristic().Manhattan)
+                            TimerE = datetime.time()
+                            print(self.BoardData.getSolution())
                             results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
-                            compareres = compareres + "Manhattan got '"+str(results[1][0])+"' Moves\n"
                             self.clearall()
+                            compareres = compareres + "Manhattan got '"+str(results[1][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS))+"\n*****************\n"
+                            TimerS = datetime.time()
                             self.creatSearchSpace(mainBoard, Heuristic().Euclidean)
+                            TimerE = datetime.time()
+                            print(self.BoardData.getSolution())
                             results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
-                            compareres = compareres + "Euclidean got '"+str(results[2][0])+"' Moves\n"
                             self.clearall()
+                            compareres = compareres + "Euclidean got '"+str(results[2][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS)*100)+"\n*****************\n"
+                            TimerS = datetime.time()
                             self.creatSearchSpace(mainBoard, Heuristic().Permutation)
+                            TimerE = datetime.time()
+                            print(self.BoardData.getSolution())
                             results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
-                            compareres = compareres + "Permutation got '"+str(results[3][0])+"' Moves"
                             self.clearall()
-                            pop.showinfo('Compare results',compareres)
+                            compareres = compareres + "Permutation got '"+str(results[3][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS))+"\n*****************\n"
+                            pop.showinfo('Compare results', compareres)
 
                         elif NEW_RECT.collidepoint(event.pos):
                             mainBoard = self.generateNewPuzzle(random.randint(5, 15))  # clicked on New Game button
@@ -160,19 +178,22 @@ class GUI:
                             solutionpath = self.BoardData.getSolution()
                             self.applysolution(mainBoard, solutionpath)
                             self.drawBoard(mainBoard, "solved")
+                            self.BoardData.clearSolution()
                             solutionpath = list()
                             self.Fronte = list()
                             self.key = 0
-                            self.CloseList= list()
+                            self.CloseList = list()
                             self.Space = {}
                             resizeable = True
                             self.solved = False
                         elif RESET_RECT.collidepoint(event.pos):
                             self.BoardData.resetMovCounter()
-                            ss = self.BoardData.getRestPath()
-                            ss.reverse()
+                            resetpath = self.BoardData.getrestpath()
+                            # resetpath.reverse()
                             self.BoardData.clearSolution()
-                            self.resetAnimation(mainBoard, ss)
+                            print(resetpath)
+                            self.resetAnimation(mainBoard, resetpath)
+                            self.BoardData.clearresetpath()
                     else:
                         # check if the clicked tile was next to the blank spot
                         blankx, blanky = self.getBlankPosition(mainBoard)
@@ -207,8 +228,9 @@ class GUI:
         self.solution.clear()
         self.Fronte = list()
         self.key = 0
-        self.CloseList= list()
+        self.CloseList = list()
         self.Space = {}
+        self.BoardData.clearresetpath()
 
     def terminate(self):
         pygame.quit()
