@@ -2,6 +2,7 @@
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
+import math
 
 import pygame, sys, random, timeit
 from datetime import datetime
@@ -77,7 +78,7 @@ class GUI:
         NEW_SURF, NEW_RECT = self.makeText('New Game', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 120, self.WINDOWHEIGHT - 60)
         SOLVE_SURF, SOLVE_RECT = self.makeText('Solve', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 120, self.WINDOWHEIGHT - 30)
         S3_SURF, S3_RECT = self.makeText('8-Puzzle', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 700, self.WINDOWHEIGHT - 300)
-        S4_SURF, S4_RECT = self.makeText('16-Puzzle', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 700, self.WINDOWHEIGHT - 260)
+        S4_SURF, S4_RECT = self.makeText('15-Puzzle', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 700, self.WINDOWHEIGHT - 260)
         S5_SURF, S5_RECT = self.makeText('24-Puzzle', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 700, self.WINDOWHEIGHT - 220)
         Hamming_SURF, Hamming_RECT = self.makeText('Hamming', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 170, self.WINDOWHEIGHT - 430)
         Euclidean_SURF, Euclidean_RECT = self.makeText('Euclidean', self.TEXTCOLOR, self.TILECOLOR, self.WINDOWWIDTH - 170, self.WINDOWHEIGHT - 400)
@@ -139,34 +140,38 @@ class GUI:
                             self.drawBoard(mainBoard, "Solution Path Found using permutation press solve")
                         elif compareAll_RECT.collidepoint(event.pos):
                             results = list()
-                            TimerS = datetime.time()
+                            TimerS = datetime.now()
                             self.creatSearchSpace(mainBoard, Heuristic().Hamming)
-                            TimerE = datetime.time()
-                            print(self.BoardData.getSolution())
-                            results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
+                            TimerE = datetime.now()
+                            self.BoardData.clearresetpath()
+                            solutionpath = self.BoardData.getSolution()
+                            results.append([len(solutionpath), solutionpath])
                             self.clearall()
-                            compareres = "Hamming got '" + str(results[0][0]) + "' Moves\nTime taken to find path: "+str((TimerE-TimerS))+"\n*****************\n"
-                            TimerS = datetime.time()
+                            compareres = "Hamming got '" + str(results[0][0]) + "' Moves\nTime taken to find path: "+str((TimerE-TimerS).microseconds/math.pow(10,6))+" seconds\nSolution Path: "+str(results[0][1])+"\n*****************\n"
+                            TimerS = datetime.now()
                             self.creatSearchSpace(mainBoard, Heuristic().Manhattan)
-                            TimerE = datetime.time()
-                            print(self.BoardData.getSolution())
-                            results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
+                            TimerE = datetime.now()
+                            self.BoardData.clearresetpath()
+                            solutionpath = self.BoardData.getSolution()
+                            results.append([len(solutionpath), solutionpath])
                             self.clearall()
-                            compareres = compareres + "Manhattan got '"+str(results[1][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS))+"\n*****************\n"
-                            TimerS = datetime.time()
+                            compareres = compareres + "Manhattan got '"+str(results[1][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS).microseconds/math.pow(10,6))+" seconds\nSolution Path: "+str(results[1][1])+"\n*****************\n"
+                            TimerS = datetime.now()
                             self.creatSearchSpace(mainBoard, Heuristic().Euclidean)
-                            TimerE = datetime.time()
-                            print(self.BoardData.getSolution())
-                            results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
+                            TimerE = datetime.now()
+                            self.BoardData.clearresetpath()
+                            solutionpath = self.BoardData.getSolution()
+                            results.append([len(solutionpath), solutionpath])
                             self.clearall()
-                            compareres = compareres + "Euclidean got '"+str(results[2][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS)*100)+"\n*****************\n"
-                            TimerS = datetime.time()
+                            compareres = compareres + "Euclidean got '"+str(results[2][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS).microseconds/math.pow(10,6))+" seconds\nSolution Path: "+str(results[2][1])+"\n*****************\n"
+                            TimerS = datetime.now()
                             self.creatSearchSpace(mainBoard, Heuristic().Permutation)
-                            TimerE = datetime.time()
-                            print(self.BoardData.getSolution())
-                            results.append([len(self.BoardData.getSolution()), self.BoardData.getSolution()])
+                            TimerE = datetime.now()
+                            self.BoardData.clearresetpath()
+                            solutionpath = self.BoardData.getSolution()
+                            results.append([len(solutionpath), solutionpath])
                             self.clearall()
-                            compareres = compareres + "Permutation got '"+str(results[3][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS))+"\n*****************\n"
+                            compareres = compareres + "Permutation got '"+str(results[3][0])+"' Moves\nTime taken to find path: "+str((TimerE-TimerS).microseconds/math.pow(10,6))+" seconds\nSolution Path: "+str(results[3][1])+"\n*****************\n"
                             pop.showinfo('Compare results', compareres)
 
                         elif NEW_RECT.collidepoint(event.pos):
@@ -175,6 +180,7 @@ class GUI:
                         elif SOLVE_RECT.collidepoint(event.pos):
                             resizeable = False
                             self.solved = True
+                            self.BoardData.clearresetpath()
                             solutionpath = self.BoardData.getSolution()
                             self.applysolution(mainBoard, solutionpath)
                             self.drawBoard(mainBoard, "solved")
